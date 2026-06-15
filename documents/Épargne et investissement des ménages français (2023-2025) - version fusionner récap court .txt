@@ -1,0 +1,265 @@
+﻿Épargne et investissement des ménages français (2023-2025) - version fusionner récap court 
+Introduction
+Entre 2023 et 2025, l’épargne française a connu des mutations profondes : inflation, révision des taux réglementés, montée du numérique, apparition de nouveaux profils d’investisseurs, et intégration progressive de l’IA dans le conseil patrimonial.
+Cette étude analyse les comportements d’épargne et d’investissement des ménages français, leurs motivations, leurs freins, ainsi que les évolutions structurelles du marché financier de détail.
+________________
+
+
+1. Cadre macro-économique et spécificités françaises
+1.1. Niveau d’épargne exceptionnel
+* Taux d’épargne des ménages en France : ~17–18 % du revenu disponible (2023-2025)
+
+* Pic à ≈26 % en 2020 (Covid-19)
+
+* France > moyenne zone euro (~15 %)
+
+* Encouragement structurel à l’épargne sécurisée (garantie de l’État, culture patrimoniale prudente)
+
+1.2. Structure patrimoniale
+   * Patrimoine financier moyen ~65 000 €
+
+   * Patrimoine financier médian ~3 636 € → forte polarisation
+
+   * Préférence historique pour :
+
+      * Immobilier (57 % de ménages propriétaires)
+
+      * Épargne liquide et garantie (Livret A, assurance-vie fonds euros)
+
+1.3. Réallocation post-2023
+         * Reprise de l’assurance-vie en fonds euros avec remontée des taux
+
+         * Réduction programmée du Livret A à 1,7 % au 1er août 2025
+
+         * Dynamique marquée vers UC, PEA, PER chez jeunes actifs
+
+________________
+
+
+2. Typologie des produits d’épargne
+Produit
+	Taux de détention
+	Encours
+	Fonction
+	Livret A / LDDS
+	~87 % des ménages
+	~432 Md€ (Livret A)
+	Liquidité / sécurité
+	Assurance-vie
+	~42 %
+	>2 000 Md€
+	Long terme / transmission
+	PEL/CEL
+	~27 %
+	~220 Md€
+	Immobilier
+	Épargne salariale
+	~15-16 %
+	—
+	Entreprise / retraite
+	PER
+	>11M titulaires (2024)
+	125 Md€
+	Retraite fiscalisée
+	Compte-titres / PEA
+	~9-10 %
+	—
+	Bourse
+	________________
+
+
+3. Comportements et motivations
+3.1. Motivations principales
+            1. Sécurité : priorité absolue
+
+            2. Liquidité : cash disponible rapide
+
+            3. Projets de vie : immobilier, retraite
+
+            4. Recherche de rendement (minoritaire mais croissante avec inflation)
+
+            5. Impact / ESG (déclaratif, adoption limitée)
+
+3.2. Fractures démographiques
+Population
+	Comportement
+	< 35 ans
+	Apps mobiles, crypto, fractionné, PER débutant
+	35–55 ans
+	Mix épargne de précaution + investissement progressif
+	55+ ans
+	Livrets, AV fonds euros, agence bancaire
+	Particularités :
+               * 48 % des <35 ans utilisent le compte courant comme support d’épargne principal (inefficience)
+
+               * Seniors = sur-pondération produits garantis
+
+________________
+
+
+4. Niveau de connaissance financière
+4.1. Diagnostic
+                  * 41 % déclarent “bien connaître les placements”
+
+                  * Lacunes sur : fiscalité, risques, diversification, fonctionnement Livret A / UC / PER
+
+                  * Surestimation fréquente chez nouveaux investisseurs (effet Dunning-Kruger)
+
+4.2. Sources d’information
+                     * Conseiller bancaire = source la plus crédible
+
+                     * Jeunes → social media, YouTube, forums, amis
+
+4.3. Conséquences
+                        * Épargne dormante
+
+                        * Décisions sous-optimales
+
+                        * Sous-exposition actions long terme
+
+                        * Adhésion faible aux robo-advisors (aversion algorithme)
+
+________________
+
+
+5. Digitalisation et nouveaux usages
+5.1. Adoption digitale
+                           * 94 % consultent leurs comptes en ligne
+
+                           * Forte croissance des courtiers low-cost (Boursorama, Trade Republic, Degiro…)
+
+5.2. Crypto & nouveaux actifs
+                              * 10–12 % des Français détiennent des crypto-actifs (2023)
+
+                              * Jeunes très sur-représentés
+
+5.3. IA dans le conseil
+                                 * 17 % des Français font confiance à l’IA pour conseiller en finance
+
+                                 * 27 % chez les <35 ans
+
+                                 * Usage attendu :
+
+                                    * agrégation d’actifs
+
+                                    * allocations automatiques
+
+                                    * notifications, pédagogie
+
+________________
+
+
+6. Freins à l’investissement
+                                       * Peur de la volatilité
+
+                                       * Vision court terme
+
+                                       * Complexité perçue des produits
+
+                                       * Fiscalité jugée obscure
+
+                                       * Méfiance envers les plateformes non régulées
+
+                                       * Manque de pédagogie proactive
+
+________________
+
+
+7. Besoins et opportunités
+7.1. Besoins exprimés
+                                          * Transparence (frais, performance nette vs inflation)
+
+                                          * Simulation d’objectifs (achat, retraite)
+
+                                          * Suivi en temps réel + notifications
+
+                                          * Accompagnement humain + digital
+
+                                          * Éducation intégrée (micro-learning)
+
+7.2. Opportunités marché
+                                             * Outils de suivi patrimonial 360°
+
+                                             * IA pédagogique explicable (XAI)
+
+                                             * Conseils sur-mesure par profil
+
+                                             * Produits long terme simplifiés (ETF, PER, PE démocratisé)
+
+________________
+
+
+Conclusion
+La France reste un pays de précaution plus que de capitalisation, mais la dynamique post-2020 crée une transition.
+L’avenir repose sur :
+                                                * éducation financière progressive
+
+                                                * transparence accrue
+
+                                                * conseil hybride humain + IA
+
+                                                * solutions simples, accessibles et personnalisées
+
+Avec un enjeu macro : convertir l’épargne dormante en capital productif.
+________________
+
+
+KPIs & Chiffres Clés (tableau exécutif)
+KPI
+	Valeur
+	Taux d'épargne des ménages
+	~17-18 %
+	Part des ménages avec Livret A/LDDS
+	~87 %
+	Encours Livret A
+	~432 Md€
+	Encours total livrets réglementés
+	~956 Md€
+	Encours assurance-vie
+	>2 000 Md€
+	% ménages assurance-vie
+	~42 %
+	Encours PER
+	~125 Md€
+	Titulaires PER
+	~11,6 M
+	Crypto-détention
+	10–12 % des Français
+	Part ménages actions en direct
+	~17–18%
+	Part jeunes plaçant sur compte courant
+	48 %
+	Croissance nouveaux investisseurs 2022-2024
+	+21,5 %
+	Part épargne en supports sans risque
+	~60 %
+	
+
+Thématique
+	Source
+	Donnée clé
+	Référence / note
+	Taux d’épargne des ménages
+	INSEE – « Consommation et épargne des ménages »
+	16,9 % du revenu dispo en 2023 (Insee)
+	INSEE publication
+	Taux d’épargne des ménages – Q1 2025
+	INSEE / Note conjoncture
+	18,8 % du revenu dispo brut au T1 2025 (Insee)
+	INSEE note 28/05/2025
+	Encours épargne réglementée (Livret A, etc.)
+	Banque de France – rapport annuel 2024
+	956 Md€ d’encours fin 2024 pour les produits réglementés (Banque de France)
+	BdF rapport 2024
+	Encours assurance-vie
+	France Assureurs / ACPR
+	> 2 000 Md€ à fin janvier 2025 (franceassureurs.fr)
+	Communiqué France Assureurs
+	Marché assurance-vie – collecte nette 2024
+	ACPR – « Le marché de l’assurance-vie en 2024 »
+	Collecte nette positive 22,8 Md€ en 2024 (ACPR)
+	ACPR publication
+	Encours placements des assureurs/fonds de pension
+	Banque de France – « Placements des assurances »
+	2 721 Md€ fin décembre 2024 (Banque de France)
+	BdF statistique

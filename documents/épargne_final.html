@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Épargne & Investissement des Français : Tendances 2023–2025</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chargement d'un font lisible et moderne -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7fafc; /* Gris clair */
+        }
+        .section-title {
+            border-left: 5px solid #0077c2; /* Bleu dominant */
+            padding-left: 0.75rem;
+        }
+        .data-card {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+            transition: transform 0.3s;
+        }
+        .data-card:hover {
+            transform: translateY(-2px);
+        }
+        .text-blue-gemini { color: #0077c2; }
+        .bg-blue-gemini-light { background-color: #e6f1f8; }
+        .text-green-impact { color: #10b981; }
+        .bg-green-impact-light { background-color: #d1fae5; }
+        .shadow-custom { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1); }
+        .icon-size { width: 32px; height: 32px; }
+/* --- BAR CHART (FIXED) --- */
+.chart-wrap{height:200px; display:flex; align-items:flex-end; gap:22px; padding:8px 6px}
+.bar{height:100%; width:22%; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; position:relative}
+     /* Custom Chart Styles - Canvas replacement using HTML/CSS */
+        .chart-bar-container {
+            display: flex;
+            align-items: flex-end;
+            height: 180px; /* Augmentation de la hauteur pour meilleure visibilité */
+            gap: 15px; /* Augmentation de l'espacement */
+            padding: 0 10px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        .bar {
+            width: 25%; /* Ajustement pour 4 barres */
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+            position: relative;
+        }
+        .bar-value {
+            position: absolute;
+            top: -20px;
+            width: 100%;
+            font-size: 0.875rem; /* Augmentation de la taille de la police */
+            font-weight: 800;
+            color: #1f2937; /* Texte foncé pour un meilleur contraste */
+        }
+        .bar-segment {
+            width: 70%; /* Réduction de la largeur des barres pour l'espacement */
+            background-color: #0077c2;
+            transition: height 0.5s ease-out;
+            border-radius: 4px 4px 0 0;
+            border: 1px solid #005a96; /* Ajout d'une bordure pour la distinction */
+        }
+        .bar-label {
+            margin-top: 5px;
+            font-size: 0.75rem;
+            color: #6b7280;
+            text-wrap: balance; /* Optimisation de la coupure de mot */
+        }
+        .donut-chart {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            /* Ajustement des pourcentages pour le graphique en anneau (32% AV, 16% Livrets, 52% Autres) */
+            background: conic-gradient(
+                #0077c2 0%, #0077c2 32%, /* Assurance Vie (32%) */
+                #60a5fa 32%, #60a5fa 48%, /* Livrets Réglementés (32+16 = 48%) */
+                #10b981 48%, #10b981 100% /* Autres Actifs (48+52 = 100%) */
+            );
+            position: relative;
+        }
+        .donut-inner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background-color: white;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <!-- TITRE GENERAL -->
+    <header class="text-center mb-10 bg-white p-6 rounded-xl shadow-custom">
+        <h1 class="text-3xl md:text-5xl font-extrabold text-blue-gemini tracking-tight">
+            Épargne & Investissement des Français : <span class="text-gray-700">Tendances 2023–2025</span>
+        </h1>
+        <p class="text-lg text-gray-500 mt-2">Synthèse stratégique pour décideurs financiers et communicants</p>
+    </header>
+
+    <main class="space-y-12">
+
+        <!-- SECTION 1 : VUE MACRO-ÉCONOMIQUE -->
+        <section class="bg-white p-6 md:p-8 rounded-xl data-card">
+            <h2 class="section-title text-2xl font-bold text-gray-800 mb-6">1. Vue Macro-Économique & Spécificités</h2>
+            <div class="grid md:grid-cols-3 gap-6">
+
+                <!-- Taux d'Épargne -->
+                <div class="p-4 bg-blue-gemini-light rounded-lg flex flex-col items-center justify-center">
+                    <div class="icon-size text-blue-gemini">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>
+                    </div>
+                    <p class="text-4xl font-extrabold text-blue-gemini mt-2">17–18 <span class="text-xl">%</span></p>
+                    <p class="text-sm font-semibold text-gray-600">Taux d'Épargne (2025 est.)</p>
+                    <p class="text-xs text-center mt-1 text-gray-500">vs. 15 % en Zone Euro. Une culture de sécurité structurelle.</p>
+                </div>
+
+                <!-- Polarisation Patrimoniale -->
+                <div class="p-4 bg-gray-100 rounded-lg">
+                    <h3 class="font-bold text-gray-800 mb-2 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="icon-size w-5 h-5 mr-2 text-gray-600">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9m12 6V8.25m0 0l-3.75 3.75M21 8.25h-4.5m-15 3a9 9 0 0 1 18 0v.75M5.25 15c-1.8 0-3.375 1.087-3.375 2.417s1.575 2.417 3.375 2.417 3.375-1.087 3.375-2.417S7.05 15 5.25 15Zm13.5 0c-1.8 0-3.375 1.087-3.375 2.417s1.575 2.417 3.375 2.417 3.375-1.087 3.375-2.417S19.05 15 17.25 15Z" />
+                        </svg>
+                        Polarisation du Patrimoine Financier
+                    </h3>
+                    <div class="flex justify-between items-center border-b pb-1 mb-1">
+                        <span class="text-sm font-medium">Patrimoine MOYEN</span>
+                        <span class="text-lg font-bold text-blue-gemini">~65 000 €</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm font-medium">Patrimoine MÉDIAN</span>
+                        <span class="text-lg font-bold text-red-500">~3 636 €</span>
+                    </div>
+                    <p class="text-xs text-red-500 mt-1">Écart significatif : forte inégalité de répartition des actifs.</p>
+                </div>
+
+                <!-- Évolution des Taux -->
+                <div class="p-4 bg-gray-100 rounded-lg">
+                    <h3 class="font-bold text-gray-800 mb-2 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="icon-size w-5 h-5 mr-2 text-blue-gemini">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18 9 11.25l4.306 4.305a11.25 11.25 0 0 0 6.69-6.69L21.75 6m0 0-3.75-3.75M21.75 6h-3.75m3.75 0v3.75" />
+                        </svg>
+                        Taux & Encours Clés
+                    </h3>
+                    <p class="text-sm">Livret A : Taux révisé à la hausse (2023). Encours historique : <span class="font-bold text-blue-gemini">432 Md€</span>.</p>
+                    <p class="text-sm mt-1">Assurance-vie : Poursuite de la décollecte partielle des fonds en euros vers les Unités de Compte (UC).</p>
+                    <p class="text-sm mt-1">Taux Livret A stable en 2024, taux des UC en hausse : dynamique de rendement recherchée.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2 : PRODUITS D'ÉPARGNE & ENCOURS -->
+        <section class="bg-white p-6 md:p-8 rounded-xl data-card">
+            <h2 class="section-title text-2xl font-bold text-gray-800 mb-6">2. Produits d'Épargne & Taux de Détention</h2>
+
+            <div class="grid lg:grid-cols-2 gap-8">
+                <!-- Sous-section : Taux de Détention (Bar Chart) -->
+                <div>
+                    <h3 class="font-bold text-lg text-gray-700 mb-4">Taux de détention des produits (Base : Total Ménages)</h3>
+                    <div class="chart-bar-container">
+                        <!-- Livret A/LDDS -->
+                        <div class="bar">
+                            <span class="bar-value">87 %</span>
+                            <div class="bar-segment" style="height: 87%;"></div>
+                            <span class="bar-label">Livret A / LDDS</span>
+                        </div>
+                        <!-- Assurance-Vie -->
+                        <div class="bar">
+                            <span class="bar-value">42 %</span>
+                            <div class="bar-segment" style="height: 42%;"></div>
+                            <span class="bar-label">Assurance-Vie</span>
+                        </div>
+                        <!-- Actions en direct -->
+                        <div class="bar">
+                            <span class="bar-value">17 %</span>
+                            <div class="bar-segment" style="height: 17%;"></div>
+                            <span class="bar-label">Actions/PEA</span>
+                        </div>
+                        <!-- Crypto-actifs -->
+                        <div class="bar">
+                            <span class="bar-value">10-12 %</span>
+                            <div class="bar-segment" style="height: 12%;"></div>
+                            <span class="bar-label">Crypto</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sous-section : Répartition des Encours (Donut Chart) -->
+                <div class="flex flex-col items-center">
+                    <h3 class="font-bold text-lg text-gray-700 mb-4">Répartition des Encours Financiers (~6 000 Md€)</h3>
+                    <div class="flex items-center space-x-6">
+                        <div class="donut-chart">
+                            <div class="donut-inner text-xs font-bold text-gray-600 flex items-center justify-center">
+                                100%
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex items-center">
+                                <span class="w-3 h-3 rounded-full bg-blue-gemini mr-2"></span>
+                                <span class="text-sm">Assurance-Vie : <span class="font-bold">~32 %</span> (~2 052 Md€)</span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="w-3 h-3 rounded-full bg-blue-400 mr-2"></span>
+                                <span class="text-sm">Livrets Réglementés : <span class="font-bold">~16 %</span> (~956 Md€)</span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="w-3 h-3 rounded-full bg-green-impact mr-2"></span>
+                                <span class="text-sm">Autres Actifs (Titres, PER...) : <span class="font-bold">~52 %</span></span>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-sm font-semibold mt-4 text-gray-700">
+                        Focus Retraite : PER atteint <span class="text-blue-gemini font-extrabold">11,6 M</span> de titulaires.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3 : PROFILS D'ÉPARGNANTS (Typologie) -->
+        <section class="bg-white p-6 md:p-8 rounded-xl data-card">
+            <h2 class="section-title text-2xl font-bold text-gray-800 mb-6">3. Profils d'Épargnants : Une Approche par Génération</h2>
+
+            <div class="grid md:grid-cols-3 gap-6">
+
+                <!-- Profil 1 : < 35 ans -->
+                <div class="p-4 border-2 border-green-impact rounded-lg bg-green-impact-light/50">
+                    <div class="flex items-center mb-3">
+                        <span class="icon-size text-green-impact mr-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.5 6.5 0 1 0 0-13 6.5 6.5 0 0 0 0 13ZM12 18.75a4.5 4.5 0 0 0-4.5 4.5h9a4.5 4.5 0 0 0-4.5-4.5Z" />
+                            </svg>
+                        </span>
+                        <h3 class="text-xl font-extrabold text-gray-800">< 35 ans : Les Explorateurs</h3>
+                    </div>
+                    <ul class="text-sm text-gray-700 space-y-1 pl-4 list-disc">
+                        <li><span class="font-bold">Aversion au compte courant :</span> 48 % placent leur épargne sur C/C (manque d'éducation financière).</li>
+                        <li><span class="font-bold">Goût du risque :</span> Détention de <span class="text-green-impact">Crypto-actifs</span> (10-12 % des Français).</li>
+                        <li><span class="font-bold">Digitaux :</span> Fort usage des <span class="font-semibold">Apps d'investissement</span> et néobanques.</li>
+                        <li><span class="font-bold">Produits privilégiés :</span> PEA, PER, Crypto.</li>
+                    </ul>
+                </div>
+
+                <!-- Profil 2 : 35-55 ans -->
+                <div class="p-4 border-2 border-blue-400 rounded-lg bg-blue-100/50">
+                    <div class="flex items-center mb-3">
+                        <span class="icon-size text-blue-gemini mr-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM6 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm12 0a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM7.5 16.5h1.5a1.5 1.5 0 0 0 1.5-1.5v-3c0-.83-.67-1.5-1.5-1.5H7.5c-.83 0-1.5.67-1.5 1.5v3c0 .83.67 1.5 1.5 1.5Zm9 0h1.5a1.5 1.5 0 0 0 1.5-1.5v-3c0-.83-.67-1.5-1.5-1.5h-1.5c-.83 0-1.5.67-1.5 1.5v3c0 .83.67 1.5 1.5 1.5ZM13.5 16.5h1.5a1.5 1.5 0 0 0 1.5-1.5v-3c0-.83-.67-1.5-1.5-1.5h-1.5c-.83 0-1.5.67-1.5 1.5v3c0 .83.67 1.5 1.5 1.5Z" />
+                            </svg>
+                        </span>
+                        <h3 class="text-xl font-extrabold text-gray-800">35–55 ans : Le Balancier</h3>
+                    </div>
+                    <ul class="text-sm text-gray-700 space-y-1 pl-4 list-disc">
+                        <li><span class="font-bold">Recherche d'équilibre :</span> Mix entre placements de sécurité et recherche de rendement.</li>
+                        <li><span class="font-bold">Objectif :</span> Préparation retraite et financement projets immobiliers/études.</li>
+                        <li><span class="font-bold">Diversification :</span> Utilisation croissante des <span class="font-semibold">Unités de Compte (UC)</span> en Assurance-vie.</li>
+                        <li><span class="font-bold">Produits privilégiés :</span> AV (UC/Fonds euros), PEA, PER.</li>
+                    </ul>
+                </div>
+
+                <!-- Profil 3 : 55+ ans -->
+                <div class="p-4 border-2 border-gray-400 rounded-lg bg-gray-100/50">
+                    <div class="flex items-center mb-3">
+                        <span class="icon-size text-gray-500 mr-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 7.5l-2.25 1.08m0 0a4.5 4.5 0 0 1-1.272-4.09l-.49-.115A3.75 3.75 0 0 0 16.5 4.5c-2.485 0-4.5 2.015-4.5 4.5s2.015 4.5 4.5 4.5c1.196 0 2.302-.46 3.14-1.226l2.25-1.08c.174-.083.33-.242.446-.431l.058-.095c.18-.3.26-.632.258-.973v-.223c0-.621-.504-1.125-1.125-1.125h-.065c-.328 0-.648.143-.868.393ZM4.125 18H2.25v-.25c0-1.657 1.343-3 3-3h15c1.657 0 3 1.343 3 3v.25h-18ZM5.25 7.5a1.5 1.5 0 0 1 3 0 1.5 1.5 0 0 1-3 0Z" />
+                            </svg>
+                        </span>
+                        <h3 class="text-xl font-extrabold text-gray-800">55+ ans : La Sécurité</h3>
+                    </div>
+                    <ul class="text-sm text-gray-700 space-y-1 pl-4 list-disc">
+                        <li><span class="font-bold">Prudence maximale :</span> 60 % de l'épargne en supports sans risque.</li>
+                        <li><span class="font-bold">Priorité :</span> Transmission patrimoniale et sécurité du capital.</li>
+                        <li><span class="font-bold">Produits privilégiés :</span> Livrets réglementés (liquidité) et Assurance-vie (fonds euros pour la garantie).</li>
+                        <li><span class="font-bold">Frein :</span> Réticence à la digitalisation, préfèrent le conseil humain.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4 : ÉVOLUTION DES USAGES & DIGITALISATION -->
+        <section class="bg-blue-gemini p-6 md:p-8 rounded-xl bg-white data-card">
+            <h2 class="text-2xl font-bold mb-6 border-l-4 border-white pl-4">4. Évolution des Usages & Digitalisation</h2>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Digitalisation Clé -->
+                <div>
+                    <h3 class="text-xl font-bold mb-3">La Transformation Numérique</h3>
+                    <div class="space-y-4">
+                        <div class="bg-white/10 p-3 rounded-lg flex items-center">
+                            <!-- TEXTE CORRIGÉ ICI : text-blue-200 au lieu de text-white -->
+                            <span class="text-4xl font-extrabold w-1/4 text-blue-200">94 <span class="text-xl">%</span></span>
+                            <p class="text-sm w-3/4">Taux d'usage des services bancaires digitalisés.</p>
+                        </div>
+                        <div class="bg-white/10 p-3 rounded-lg flex items-center">
+                            <!-- TEXTE CORRIGÉ ICI : text-blue-200 au lieu de text-white -->
+                            <span class="text-4xl font-extrabold w-1/4 text-blue-200">80 <span class="text-xl">%</span></span>
+                            <p class="text-sm w-3/4">des Français souhaitent un modèle de conseil hybride (Digital + Humain).</p>
+                        </div>
+                        <div class="bg-white/10 p-3 rounded-lg flex items-center">
+                            <!-- TEXTE CORRIGÉ ICI : text-blue-200 au lieu de text-white -->
+                            <span class="text-4xl font-extrabold w-1/4 text-blue-200">27 <span class="text-xl">%</span></span>
+                            <p class="text-sm w-3/4">Confiance déclarée dans l'IA pour le conseil patrimonial (chiffre en progression).</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timeline IA & Omnicanalité (simplifiée) -->
+                <div>
+                    <h3 class="text-xl font-bold mb-3">Timeline : Adoption de l'IA et Conseil</h3>
+                    <ol class="relative border-l border-white/50 space-y-4 pt-2 ml-1">
+                        <li class="mb-4 ml-6">
+                            <span class="absolute flex items-center justify-center w-3 h-3 bg-white rounded-full -left-1.5 ring-4 ring-blue-500"></span>
+                            <h4 class="font-semibold text-blue-200">2023 : Prise de Conscience</h4>
+                            <p class="text-sm text-gray-200">Adoption massive des outils IA (ChatGPT/Gemini) : émergence des requêtes financières.</p>
+                        </li>
+                        <li class="mb-4 ml-6">
+                            <span class="absolute flex items-center justify-center w-3 h-3 bg-white rounded-full -left-1.5 ring-4 ring-blue-500"></span>
+                            <h4 class="font-semibold text-blue-200">2024 : Période Hybride</h4>
+                            <p class="text-sm text-gray-200">Généralisation de l'omnicanalité. Intégration des premiers <span class="font-bold">Robo-Advisors</span> IA dans les plateformes bancaires.</p>
+                        </li>
+                        <li class="ml-6">
+                            <span class="absolute flex items-center justify-center w-3 h-3 bg-white rounded-full -left-1.5 ring-4 ring-blue-500"></span>
+                            <h4 class="font-semibold text-blue-200">2025 : IA-Conseiller</h4>
+                            <p class="text-sm text-gray-200">L'IA devient un outil de personnalisation et de recommandation proactif, basé sur l'analyse macro.</p>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5 : LEVIERS STRATÉGIQUES (Enjeux) -->
+        <section class="bg-white p-6 md:p-8 rounded-xl data-card">
+            <h2 class="section-title text-2xl font-bold text-gray-800 mb-6">5. Leviers Stratégiques pour l'Avenir</h2>
+
+            <div class="grid md:grid-cols-3 gap-6">
+
+                <!-- Enjeu 1 : Éducation Financière -->
+                <div class="text-center p-4 border border-gray-200 rounded-lg">
+                    <span class="icon-size text-blue-gemini mx-auto mb-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8 mx-auto">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3.04.514A3.375 3.375 0 0 0 3 9.75v10.5a1.125 1.125 0 0 0 1.518 1.085l.775-.388a1.125 1.125 0 0 1 1.086 0l.775.388A1.125 1.125 0 0 0 9 21v-10.5a3.375 3.375 0 0 1 3-3.375c1.052 0 2.062.18 3.04.514A3.375 3.375 0 0 1 18 9.75v10.5a1.125 1.125 0 0 0 1.518 1.085l.775-.388a1.125 1.125 0 0 1 1.086 0l.775.388A1.125 1.125 0 0 0 21 21v-10.5a8.967 8.967 0 0 0-3-.375Z" />
+                        </svg>
+                    </span>
+                    <h3 class="font-bold text-lg text-gray-800">Éducation Financière</h3>
+                    <p class="text-sm text-gray-600 mt-1">Nécessaire pour les jeunes (< 35 ans) pour contrer la "peur de mal faire" et l'inertie du compte courant. Assurer la transition Sécurité -> Rendement.</p>
+                </div>
+
+                <!-- Enjeu 2 : Finance Durable (ISR) -->
+                <div class="text-center p-4 border border-green-400 rounded-lg bg-green-impact-light">
+                    <span class="icon-size text-green-impact mx-auto mb-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8 mx-auto">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.094-4.5-4.687-4.5-1.928 0-3.578 1.036-4.314 2.141-.58-.37-.899-.958-.899-1.637v-.086a2.25 2.25 0 0 0-2.25-2.25h-5.25a2.25 2.25 0 0 0-2.25 2.25v2.25c0 1.385.69 2.685 1.838 3.468C6.9 11.23 7.828 11.25 8.25 11.25H9.75a2.25 2.25 0 0 1 2.25 2.25v3.375c0 1.385-.69 2.685-1.838 3.468C10.57 21.73 9.642 21.75 9.22 21.75h-1.5a2.25 2.25 0 0 1-2.25-2.25V17.25M21 8.25v2.25M17.25 18a4.5 4.5 0 0 0 4.5-4.5V9.75M17.25 18H21M9 13.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Z" />
+                        </svg>
+                    </span>
+                    <h3 class="font-bold text-lg text-green-impact">Placement à Impact (ISR)</h3>
+                    <p class="text-sm text-gray-700 mt-1">Forte demande pour les produits ISR et thématiques environnementales, surtout chez les moins de 55 ans. Transition vers des placements plus utiles et responsables.</p>
+                </div>
+
+                <!-- Enjeu 3 : Réponse au modèle Hybride -->
+                <div class="text-center p-4 border border-gray-200 rounded-lg">
+                    <span class="icon-size text-blue-gemini mx-auto mb-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8 mx-auto">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 14.25v2.25m-4.5 7.5h15l-1.5-1.687a1.125 1.125 0 0 1-.194-.526V9.75M3.75 14.25h16.5m-16.5 0h1.5m14.25 0h1.5M7.5 14.25V9.75M7.5 9.75a3 3 0 0 1 6 0M3.75 6.75h16.5M3.75 3.75h16.5c1.242 0 2.25 1.008 2.25 2.25v7.5c0 1.242-1.008 2.25-2.25 2.25H3.75A2.25 2.25 0 0 1 1.5 14.25v-7.5c0-1.242 1.008-2.25 2.25-2.25Z" />
+                        </svg>
+                    </span>
+                    <h3 class="font-bold text-lg text-gray-800">Omnicanalité & Conseil</h3>
+                    <p class="text-sm text-gray-600 mt-1">La clé est de marier l'efficacité de l'IA (analyse et rapidité) à l'expertise humaine (confiance et personnalisation) pour satisfaire les 80 % d'épargnants qui veulent le meilleur des deux mondes.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER / SOURCE -->
+        <footer class="text-center text-xs text-gray-500 pt-6">
+            <p>Source des données : Synthèse des Rapports "Analyse 2023–2025", "ChatGPT – Besoins et Stratégies" et "Gemini – Analyse du contexte macro, comportements et tendances".</p>
+        </footer>
+
+    </main>
+</body>
+</html>

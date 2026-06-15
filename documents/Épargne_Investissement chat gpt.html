@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infographie: Épargne et Investissement en France Détaillée</title>
+    <!-- Chargement de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Configuration Tailwind pour utiliser une police propre et des couleurs thématiques -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-blue': '#1e40af', // Blue 800
+                        'secondary-green': '#059669', // Emerald 600
+                        'accent-yellow': '#fcd34d', // Amber 300
+                        'dark-gray': '#374151' // Gray 700
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Importer la police Inter */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+    </style>
+</head>
+<body class="bg-gray-100 font-sans p-4 md:p-8">
+
+    <div class="max-w-5xl mx-auto bg-white shadow-2xl rounded-xl overflow-hidden">
+        
+        <!-- Header de l'infographie -->
+        <header class="bg-primary-blue p-6 md:p-10 text-white">
+            <h1 class="text-3xl md:text-5xl font-extrabold mb-1">
+                L'Épargne et l'Investissement en France
+            </h1>
+            <p class="text-xl opacity-90 font-light">Analyse approfondie des tendances et des motivations (2023/2025)</p>
+        </header>
+
+        <main class="p-6 md:p-10 space-y-12">
+            
+            <!-- Section 1: Taux d'Épargne Élevé & Motivation -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 p-6 bg-blue-50 rounded-xl border-l-4 border-primary-blue shadow-lg">
+                <div class="lg:col-span-1 border-b lg:border-b-0 lg:border-r border-blue-200 pb-4 lg:pr-6">
+                    <h2 class="text-2xl font-bold text-dark-gray mb-3 flex items-center">
+                        <svg class="w-6 h-6 mr-3 text-primary-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                        Taux d'Épargne Record
+                    </h2>
+                    <p class="text-4xl md:text-6xl font-extrabold text-primary-blue leading-none">18,6%</p>
+                    <p class="text-lg uppercase tracking-wider text-gray-500 mt-2">Du revenu disponible (T1 2025)</p>
+                    <p class="text-sm text-gray-600 mt-3">Un taux bien supérieur à la moyenne pré-2020 (14%).</p>
+                </div>
+
+                <div class="lg:col-span-2 space-y-4 lg:pl-6">
+                    <h3 class="text-xl font-semibold text-dark-gray flex items-center mb-3">
+                        <svg class="w-5 h-5 mr-2 text-primary-blue" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l3 3a1 1 0 001.414-1.414L11 9.586V6z" clip-rule="evenodd"></path></svg>
+                        Principales Motivations (Prudence et Sécurité)
+                    </h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-white p-3 rounded-lg shadow-sm border border-blue-200">
+                            <p class="text-3xl font-bold text-secondary-green">65%</p>
+                            <p class="text-sm text-gray-600">des épargnants sont motivés par la <span class="font-bold">prudence</span> face à l'incertitude.</p>
+                        </div>
+                         <div class="bg-white p-3 rounded-lg shadow-sm border border-blue-200">
+                            <p class="text-3xl font-bold text-secondary-green">60%</p>
+                            <p class="text-sm text-gray-600">des épargnants cherchent à faire face aux <span class="font-bold">imprévus</span> (santé, famille, voiture).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Section 2: Destinations Privilégiées (Placements Sans Risque) -->
+            <div class="p-6 bg-green-50 rounded-xl border-l-4 border-secondary-green shadow-lg">
+                <h2 class="text-2xl font-bold text-dark-gray mb-6 flex items-center">
+                    <svg class="w-6 h-6 mr-3 text-secondary-green" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V9m0 3v1m0 3v1"></path></svg>
+                    Destinations de l'Épargne : Le Triomphe du Sans Risque
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Assurance-Vie -->
+                    <div class="p-5 bg-white rounded-lg shadow-md border-t-4 border-primary-blue hover:shadow-xl transition duration-300">
+                        <p class="text-xs uppercase font-semibold text-primary-blue">Placement Favori</p>
+                        <p class="text-4xl font-extrabold text-primary-blue my-2">2 052 Md €</p>
+                        <p class="font-bold text-lg text-gray-800">Assurance-Vie</p>
+                        <p class="text-sm text-gray-500 mt-1">Encours record atteint à mi-2025. Principalement dirigée vers les fonds en euros (capital garanti).</p>
+                    </div>
+
+                    <!-- Livrets Réglementés -->
+                    <div class="p-5 bg-white rounded-lg shadow-md border-t-4 border-secondary-green hover:shadow-xl transition duration-300">
+                        <p class="text-xs uppercase font-semibold text-secondary-green">Liquidité & Sécurité</p>
+                        <p class="text-4xl font-extrabold text-secondary-green my-2">956 Md €</p>
+                        <p class="font-bold text-lg text-gray-800">Livrets Réglementés (Total)</p>
+                        <p class="text-sm text-gray-500 mt-1">Dont <span class="font-bold">432 Md €</span> sur le seul Livret A fin 2024. Dopé par des taux d'intérêt élevés.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Section 3: Investissement Boursier & Actionnariat -->
+            <div class="p-6 bg-yellow-50 rounded-xl border-l-4 border-accent-yellow shadow-lg">
+                <h2 class="text-2xl font-bold text-dark-gray mb-6 flex items-center">
+                    <svg class="w-6 h-6 mr-3 text-accent-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m0 0l2.553 2.553c.67.67.92.934 1.15.934h1.66c.23 0 .48-.264 1.15-.934L17 15"></path></svg>
+                    L'Actionnariat Direct : Une Minorité en Regain d'Intérêt
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                    <div class="p-4 bg-white rounded-lg shadow-inner">
+                        <p class="text-4xl font-extrabold text-primary-blue">17,4%</p>
+                        <p class="text-sm uppercase tracking-wider text-gray-500 mt-2">de ménages détiennent des valeurs mobilières</p>
+                    </div>
+                    
+                    <div class="p-4 bg-white rounded-lg shadow-inner md:col-span-2 text-left">
+                        <p class="text-lg font-semibold text-gray-700">Canaux d'Investissement</p>
+                        <ul class="list-disc list-inside space-y-1 mt-2 text-gray-600">
+                            <li>41,7% des ménages détiennent une Assurance-Vie (y compris en unités de compte).</li>
+                            <li>L'investissement boursier direct se fait via Compte-Titres ou PEA (Plan d'Épargne en Actions).</li>
+                            <li>Un regain d'intérêt pour l'actionnariat est observé depuis 2020.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 4: L'Épargne Retraite (Nouveauté) -->
+            <div class="p-6 bg-red-50 rounded-xl border-l-4 border-red-500 shadow-lg">
+                <h2 class="text-2xl font-bold text-dark-gray mb-6 flex items-center">
+                    <svg class="w-6 h-6 mr-3 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    Le Poids de la Retraite dans l'Épargne
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="p-4 bg-white rounded-lg shadow-inner">
+                        <p class="text-4xl font-extrabold text-red-600">59%</p>
+                        <p class="text-sm uppercase tracking-wider text-gray-500 mt-2">des Français estiment que leur retraite sera insuffisante</p>
+                    </div>
+                    
+                    <div class="p-4 bg-white rounded-lg shadow-inner text-left">
+                        <p class="text-lg font-semibold text-gray-700">Répartition de l'Épargne Retraite</p>
+                        <ul class="list-disc list-inside space-y-1 mt-2 text-gray-600">
+                            <li><span class="font-bold">Assurance-Vie (AV):</span> Principal outil désigné pour la retraite.</li>
+                            <li><span class="font-bold">PEA et Comptes-Titres:</span> Utilisés par une partie des investisseurs.</li>
+                            <li><span class="font-bold">PER (Plan Épargne Retraite):</span> En progression, surtout auprès des jeunes.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="mt-8 text-center text-sm text-gray-500 border-t pt-4">
+                <p>Analyse des données basées sur l'enquête AG2R La Mondiale - Amphitéa - Cercle de l'Épargne (2023/2024) et les chiffres de l'AMF.</p>
+            </footer>
+            
+        </main>
+
+    </div>
+
+</body>
+</html>

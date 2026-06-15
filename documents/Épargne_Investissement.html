@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Épargne & Investissement: Le Grand Portrait 2025</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 350px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+                max-height: 400px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans leading-relaxed text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+
+        <header class="text-center mb-16">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-[#247BA0] mb-4">Épargne & Investissement: Le Grand Portrait</h1>
+            <p class="text-xl md:text-2xl text-gray-700">Analyse des comportements et opportunités en France (2023-2025)</p>
+        </header>
+
+        <main class="space-y-16">
+
+            <section id="section-contexte">
+                <h2 class="text-3xl font-bold text-[#247BA0] mb-6 border-b-2 border-[#00B2FF] pb-2">Partie 1: Contexte et Tendances Clés</h2>
+                <p class="text-lg text-gray-700 mb-8">
+                    Le paysage financier français traverse une mutation. Un taux d'épargne historiquement élevé, hérité des crises successives, se heurte désormais à l'inflation et à des taux bas, poussant les ménages à repenser leurs stratégies. La digitalisation s'accélère, mais la culture du risque reste un frein majeur à l'investissement.
+                </p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                    <div class="bg-white rounded-lg shadow-lg p-8 text-center transition-transform transform hover:scale-105">
+                        <span class="block text-6xl font-bold text-[#00B2FF]">17,4%</span>
+                        <h3 class="text-xl font-semibold text-gray-900 mt-2">Taux d'épargne</h3>
+                        <p class="text-gray-600">(Q1 2024, BdF) - Un des plus hauts d'Europe.</p>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-lg p-8 text-center transition-transform transform hover:scale-105">
+                        <span class="block text-6xl font-bold text-[#F2545B]">12%</span>
+                        <h3 class="text-xl font-semibold text-gray-900 mt-2">Taux d'investisseurs actifs</h3>
+                        <p class="text-gray-600">(AMF 2024) - En croissance, surtout chez les jeunes.</p>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-lg p-8 text-center transition-transform transform hover:scale-105">
+                        <span class="block text-6xl font-bold text-[#00F5D4]">65%</span>
+                        <h3 class="text-xl font-semibold text-gray-900 mt-2">Confiance bancaire</h3>
+                        <p class="text-gray-600">La banque traditionnelle reste le pilier du conseil.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="section-epargne">
+                <h2 class="text-3xl font-bold text-[#247BA0] mb-6 border-b-2 border-[#00B2FF] pb-2">Partie 2: La France qui Épargne</h2>
+                <p class="text-lg text-gray-700 mb-8">
+                    L'"épargne" en France reste dominée par l'aversion au risque. La motivation première est la constitution d'une "épargne de précaution", favorisant la liquidité et la garantie du capital. L'Assurance-Vie demeure le placement préféré en stock, mais les livrets réglementés captent l'essentiel des nouveaux flux.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    
+                    <div class="bg-white rounded-lg shadow-md p-6 flex flex-col">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-4 text-center">Répartition du Stock d'Épargne des Français</h3>
+                        <div class="chart-container flex-grow">
+                            <canvas id="chart-repartition-epargne"></canvas>
+                        </div>
+                        <p class="text-sm text-gray-600 mt-4">
+                            L'Assurance-Vie (40%) domine le patrimoine financier, mais les Livrets et Dépôts (40% combinés) représentent la poche de liquidité et de sécurité. Le PER (7%) gagne du terrain avec les incitations fiscales.
+                        </p>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-md p-6 flex flex-col">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-4 text-center">Motivations Principales de l'Épargne</h3>
+                        <div class="chart-container flex-grow">
+                            <canvas id="chart-motivations-epargne"></canvas>
+                        </div>
+                        <p class="text-sm text-gray-600 mt-4">
+                            La "Sécurité / Précaution" (78%) écrase les autres motivations. La "Préparation de projet" (45%) et la "Retraite" (35%) suivent, tandis que le "Rendement" pur n'est une priorité que pour une minorité (18%).
+                        </p>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-md p-6 flex flex-col">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-4 text-center">Sources d'Information Privilégiées</h3>
+                        <div class="chart-container flex-grow">
+                            <canvas id="chart-sources-information"></canvas>
+                        </div>
+                        <p class="text-sm text-gray-600 mt-4">
+                            Le conseiller bancaire (65%) reste la source de confiance dominante. Les médias et sites spécialisés (40%) jouent un rôle clé, tandis que les FinTech et réseaux sociaux (15%) progressent chez les moins de 35 ans.
+                        </p>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-md p-6 flex flex-col">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-4 text-center">Attentes Vis-à-vis des Outils Numériques</h3>
+                        <div class="flex flex-col space-y-4 pt-4">
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="text-gray-700 font-semibold">Suivi en temps réel & Agrégation</span>
+                                    <span class="text-[#00B2FF] font-bold">82%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                    <div class="bg-[#00B2FF] h-2.5 rounded-full" style="width: 82%"></div>
+                                </div>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="text-gray-700 font-semibold">Outils de Simulation & Projection</span>
+                                    <span class="text-[#00F5D4] font-bold">68%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                    <div class="bg-[#00F5D4] h-2.5 rounded-full" style="width: 68%"></div>
+                                </div>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="text-gray-700 font-semibold">Conseil personnalisé par IA</span>
+                                    <span class="text-[#F2545B] font-bold">31%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                    <div class="bg-[#F2545B] h-2.5 rounded-full" style="width: 31%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-600 mt-4">
+                            Les épargnants plébiscitent les outils de pilotage (suivi, agrégation) et de simulation. L'intérêt pour le conseil par IA est encore modéré mais en forte croissance, traduisant un besoin d'autonomie assistée.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="section-investissement">
+                <h2 class="text-3xl font-bold text-[#247BA0] mb-6 border-b-2 border-[#00B2FF] pb-2">Partie 3: La France qui Investit</h2>
+                <p class="text-lg text-gray-700 mb-8">
+                    L'investissement en France connaît un renouveau, porté par les néo-investisseurs (souvent plus jeunes) et la recherche de rendement face à l'inflation. Cependant, le passage à l'acte est freiné par une méconnaissance profonde des marchés et une forte perception du risque.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    
+                    <div class="bg-white rounded-lg shadow-md p-6 flex flex-col">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-4 text-center">Freins Principaux à l'Investissement</h3>
+                        <div class="chart-container flex-grow">
+                            <canvas id="chart-freins-investissement"></canvas>
+                        </div>
+                        <p class="text-sm text-gray-600 mt-4">
+                            La "Peur de perdre" (85%) est le frein psychologique numéro un. Le "Manque de connaissances" (70%) et la "Complexité perçue" (60%) forment un mur que la pédagogie peine encore à franchir.
+                        </p>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-md p-6 flex flex-col">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-4 text-center">Évolution des Néo-Investisseurs (Indice 100 en 2019)</h3>
+                        <div class="chart-container flex-grow">
+                            <canvas id="chart-evolution-investisseurs"></canvas>
+                        </div>
+                        <p class="text-sm text-gray-600 mt-4">
+                            Le nombre d'investisseurs particuliers a connu un pic post-COVID (2020-2021), tiré par les actions. Après une stabilisation, la tendance de fond reste à la hausse, alimentée par les plateformes numériques.
+                        </p>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-md p-6 flex flex-col md:col-span-2">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-4 text-center">Canaux et Produits d'Investissement Privilégiés</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="flex flex-col">
+                                <div class="chart-container flex-grow">
+                                    <canvas id="chart-produits-investissement"></canvas>
+                                </div>
+                                <p class="text-sm text-gray-600 mt-4">
+                                    Le PEA (38%) est le véhicule préféré pour les actions. L'Assurance-Vie en UC (30%) sert de porte d'entrée diversifiée. Les Crypto-actifs (10%) sont une poche significative, surtout chez les jeunes, dépassant les comptes-titres classiques.
+                                </p>
+                            </div>
+                            <div class="flex flex-col">
+                                <div class="chart-container flex-grow">
+                                    <canvas id="chart-canaux-investissement"></canvas>
+                                </div>
+                                <p class="text-sm text-gray-600 mt-4">
+                                    Les banques traditionnelles (55%) gèrent encore la majorité des encours d'investissement. Les courtiers en ligne (30%) et les FinTech/Néobanques (15%) grignotent des parts de marché grâce à leur UX et leurs frais réduits.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <section id="section-comparaison">
+                <h2 class="text-3xl font-bold text-[#247BA0] mb-6 border-b-2 border-[#00B2FF] pb-2">Partie 4: La Fracture Comportementale</h2>
+                <p class="text-lg text-gray-700 mb-8">
+                    La différence majeure entre "épargner" et "investir" est psychologique. On observe une fracture générationnelle nette : les jeunes actifs sont plus ouverts aux nouveaux outils et au risque, tandis que les seniors détiennent le patrimoine mais privilégient la sécurité. Le besoin non couvert est le même : un accompagnement accessible et pédagogique.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-white rounded-lg shadow-md p-6 flex flex-col">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-4 text-center">Perception Risque & Outils par Génération</h3>
+                        <div class="chart-container flex-grow">
+                            <canvas id="chart-comparaison-generation"></canvas>
+                        </div>
+                        <p class="text-sm text-gray-600 mt-4">
+                            85% des 55+ privilégient la sécurité, contre 45% des 18-35 ans. Ces derniers sont 3 fois plus ouverts à un conseil par IA (55% vs 15%) et à l'investissement pour le rendement (65% vs 20%).
+                        </p>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-4 text-center">Besoins Non Couverts: Le Triptyque Gagnant</h3>
+                        <div class="space-y-6 pt-6">
+                            <div class="flex items-center space-x-4">
+                                <span class="flex-shrink-0 w-12 h-12 bg-[#00F5D4] text-[#247BA0] rounded-full flex items-center justify-center text-2xl font-bold">1</span>
+                                <div>
+                                    <h4 class="text-lg font-semibold">Acculturation & Pédagogie</h4>
+                                    <p class="text-gray-600">Vulgarisation des concepts de base (risque, diversification, frais) via des formats courts, interactifs et gamifiés.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <span class="flex-shrink-0 w-12 h-12 bg-[#00B2FF] text-white rounded-full flex items-center justify-center text-2xl font-bold">2</span>
+                                <div>
+                                    <h4 class="text-lg font-semibold">Pilotage & Projection</h4>
+                                    <p class="text-gray-600">Une interface unique pour agréger épargne et investissement, et simuler l'impact des décisions sur les projets de vie (retraite, achat).</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <span class="flex-shrink-0 w-12 h-12 bg-[#F2545B] text-white rounded-full flex items-center justify-center text-2xl font-bold">3</span>
+                                <div>
+                                    <h4 class="text-lg font-semibold">Conseil Accessible & Hybride</h4>
+                                    <p class="text-gray-600">Combiner la puissance de l'IA (robo-advisor, copilote) pour les tâches simples et l'accès à un conseiller humain pour les moments clés.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="section-strategie">
+                <h2 class="text-3xl font-bold text-[#247BA0] mb-6 border-b-2 border-[#00B2FF] pb-2">Partie 5: Conclusion Stratégique & Opportunités</h2>
+                <p class="text-lg text-gray-700 mb-8">
+                    Le marché français est à un point de bascule. La simple collecte d'épargne sécurisée ne suffit plus. L'opportunité majeure réside dans la **transformation de l'épargnant en investisseur accompagné**. Les acteurs qui réussiront seront ceux qui combinent confiance, pédagogie engageante et outils technologiques intelligents pour dé-risquer psychologiquement l'investissement.
+                </p>
+                <div class="bg-white rounded-lg shadow-md p-8">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-6 text-center">Axes d'Innovation Stratégiques</h3>
+                    <div class="flex flex-col md:flex-row justify-around items-center space-y-6 md:space-y-0 md:space-x-6">
+                        
+                        <div class="flex flex-col items-center text-center p-4">
+                            <div class="w-24 h-24 bg-[#00F5D4] rounded-full flex items-center justify-center shadow-lg mb-4">
+                                <span class="text-4xl">🎓</span>
+                            </div>
+                            <h4 class="text-xl font-semibold text-[#247BA0]">Éducation Personnalisée</h4>
+                            <p class="text-gray-600">Contenus adaptatifs (IA) pour combler les lacunes de connaissance spécifiques à chaque profil utilisateur.</p>
+                        </div>
+
+                        <div class="text-4xl text-gray-300 font-light hidden md:block">→</div>
+
+                        <div class="flex flex-col items-center text-center p-4">
+                            <div class="w-24 h-24 bg-[#00B2FF] text-white rounded-full flex items-center justify-center shadow-lg mb-4">
+                                <span class="text-4xl">🤖</span>
+                            </div>
+                            <h4 class="text-xl font-semibold text-[#247BA0]">Copilote Financier IA</h4>
+                            <p class="text-gray-600">Un assistant proactif qui analyse, simule et alerte, sans remplacer la décision finale de l'utilisateur.</p>
+                        </div>
+                        
+                        <div class="text-4xl text-gray-300 font-light hidden md:block">→</div>
+
+                        <div class="flex flex-col items-center text-center p-4">
+                            <div class="w-24 h-24 bg-[#F2545B] text-white rounded-full flex items-center justify-center shadow-lg mb-4">
+                                <span class="text-4xl">🤝</span>
+                            </div>
+                            <h4 class="text-xl font-semibold text-[#247BA0]">Conseil Hybride</h4>
+                            <p class="text-gray-600">Digital-first pour l'autonomie, mais avec un accès "Premium" à un expert humain pour valider les stratégies complexes.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <footer class="text-center mt-16 pt-8 border-t border-gray-300">
+            <p class="text-sm text-gray-500">Analyse basée sur les données agrégées 2023-2025 (AMF, Banque de France, INSEE, Études FinTech). Cette infographie est une visualisation de synthèse à des fins d'analyse stratégique.</p>
+        </footer>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const primaryColor = '#00B2FF';
+            const primaryLightColor = '#00F5D4';
+            const accentColor1 = '#F2545B';
+            const accentColor2 = '#A93F55';
+            const darkColor = '#247BA0';
+            const grayColor = '#6B7280';
+
+            function wrapLabels(label, maxWidth = 16) {
+                if (typeof label !== 'string' || label.length <= maxWidth) {
+                    return label;
+                }
+                const words = label.split(' ');
+                const lines = [];
+                let currentLine = '';
+                for (const word of words) {
+                    if ((currentLine + ' ' + word).length > maxWidth && currentLine.length > 0) {
+                        lines.push(currentLine);
+                        currentLine = word;
+                    } else {
+                        currentLine = (currentLine.length > 0 ? currentLine + ' ' : '') + word;
+                    }
+                }
+                if (currentLine.length > 0) {
+                    lines.push(currentLine);
+                }
+                return lines;
+            }
+
+            const tooltipTitleCallback = (tooltipItems) => {
+                const item = tooltipItems[0];
+                if (!item) return '';
+                let label = item.chart.data.labels[item.dataIndex];
+                if (Array.isArray(label)) {
+                    return label.join(' ');
+                } else {
+                    return label;
+                }
+            };
+            
+            const commonOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            font: {
+                                family: 'Inter'
+                            }
+                        }
+                    },
+                    tooltip: {
+                        enabled: true,
+                        bodyFont: {
+                            family: 'Inter'
+                        },
+                        titleFont: {
+                            family: 'Inter'
+                        },
+                        callbacks: {
+                            title: tooltipTitleCallback
+                        }
+                    }
+                }
+            };
+
+            if (document.getElementById('chart-repartition-epargne')) {
+                const ctx = document.getElementById('chart-repartition-epargne').getContext('2d');
+                new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Assurance-Vie (Fonds € & UC)', 'Livrets (A, LDDS, etc.)', 'Dépôts à vue', 'PEL / CEL', 'PER / Épargne Salariale'].map(l => wrapLabels(l)),
+                        datasets: [{
+                            data: [40, 25, 15, 8, 7],
+                            backgroundColor: [darkColor, primaryColor, primaryLightColor, accentColor2, accentColor1],
+                            borderColor: '#ffffff',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        ...commonOptions,
+                        cutout: '60%'
+                    }
+                });
+            }
+
+            if (document.getElementById('chart-motivations-epargne')) {
+                const ctx = document.getElementById('chart-motivations-epargne').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Sécurité / Précaution', 'Projet Immobilier', 'Retraite', 'Transmission', 'Rendement / Performance'].map(l => wrapLabels(l)),
+                        datasets: [{
+                            label: '% des répondants',
+                            data: [78, 45, 35, 22, 18],
+                            backgroundColor: [primaryColor, primaryColor, primaryColor, primaryColor, primaryColor],
+                            borderRadius: 4
+                        }]
+                    },
+                    options: {
+                        ...commonOptions,
+                        indexAxis: 'y',
+                        plugins: {
+                            ...commonOptions.plugins,
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            x: {
+                                beginAtZero: true,
+                                max: 100
+                            }
+                        }
+                    }
+                });
+            }
+
+            if (document.getElementById('chart-sources-information')) {
+                const ctx = document.getElementById('chart-sources-information').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Conseiller Bancaire', 'Médias / Sites Spécialisés', 'Famille / Amis', 'FinTech / Apps', 'Réseaux Sociaux'].map(l => wrapLabels(l)),
+                        datasets: [{
+                            label: 'Niveau de confiance (%)',
+                            data: [65, 40, 30, 15, 12],
+                            backgroundColor: [darkColor, primaryColor, grayColor, primaryLightColor, accentColor1],
+                            borderRadius: 4
+                        }]
+                    },
+                    options: {
+                        ...commonOptions,
+                        plugins: {
+                            ...commonOptions.plugins,
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            }
+
+            if (document.getElementById('chart-freins-investissement')) {
+                const ctx = document.getElementById('chart-freins-investissement').getContext('2d');
+                new Chart(ctx, {
+                    type: 'radar',
+                    data: {
+                        labels: ['Peur de perdre', 'Manque de connaissances', 'Complexité perçue', 'Fiscalité', 'Manque de confiance', 'Frais élevés'].map(l => wrapLabels(l)),
+                        datasets: [{
+                            label: 'Niveau de frein (sur 100)',
+                            data: [85, 70, 60, 45, 40, 35],
+                            backgroundColor: 'rgba(242, 84, 91, 0.2)',
+                            borderColor: accentColor1,
+                            pointBackgroundColor: accentColor1,
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: accentColor1
+                        }]
+                    },
+                    options: {
+                        ...commonOptions,
+                        plugins: {
+                            ...commonOptions.plugins,
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            r: {
+                                beginAtZero: true,
+                                max: 100,
+                                pointLabels: {
+                                    font: {
+                                        size: 10
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            if (document.getElementById('chart-evolution-investisseurs')) {
+                const ctx = document.getElementById('chart-evolution-investisseurs').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['2019', '2020', '2021', '2022', '2023', '2024'],
+                        datasets: [{
+                            label: 'Nouveaux investisseurs (Indice 100)',
+                            data: [100, 180, 210, 190, 205, 220],
+                            borderColor: primaryColor,
+                            backgroundColor: 'rgba(0, 178, 255, 0.1)',
+                            fill: true,
+                            tension: 0.3
+                        }]
+                    },
+                    options: {
+                        ...commonOptions,
+                        plugins: {
+                            ...commonOptions.plugins,
+                            legend: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+            }
+
+            if (document.getElementById('chart-produits-investissement')) {
+                const ctx = document.getElementById('chart-produits-investissement').getContext('2d');
+                new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['PEA', 'Assurance-Vie (UC)', 'Crypto-actifs', 'Compte-Titres Ordinaire', 'PER (Investi)'].map(l => wrapLabels(l)),
+                        datasets: [{
+                            data: [38, 30, 10, 12, 10],
+                            backgroundColor: [darkColor, primaryColor, primaryLightColor, accentColor1, grayColor],
+                            borderColor: '#ffffff',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        ...commonOptions,
+                        plugins: {
+                           ...commonOptions.plugins,
+                            legend: {
+                                display: true,
+                                position: 'right'
+                            }
+                        }
+                    }
+                });
+            }
+            
+            if (document.getElementById('chart-canaux-investissement')) {
+                const ctx = document.getElementById('chart-canaux-investissement').getContext('2d');
+                new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Banques Traditionnelles', 'Courtiers en Ligne', 'FinTech / Néobanques'].map(l => wrapLabels(l)),
+                        datasets: [{
+                            data: [55, 30, 15],
+                            backgroundColor: [darkColor, primaryColor, accentColor1],
+                            borderColor: '#ffffff',
+                            borderWidth: 2
+                        }]
+                    },
+                     options: {
+                        ...commonOptions,
+                        plugins: {
+                           ...commonOptions.plugins,
+                            legend: {
+                                display: true,
+                                position: 'right'
+                            }
+                        }
+                    }
+                });
+            }
+
+            if (document.getElementById('chart-comparaison-generation')) {
+                const ctx = document.getElementById('chart-comparaison-generation').getContext('2d');
+                const labels = ['Priorité Sécurité', 'Investit pour Rendement', 'Ouvert au Conseil IA'].map(l => wrapLabels(l));
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: '18-35 ans',
+                                data: [45, 65, 55],
+                                backgroundColor: primaryColor,
+                                borderRadius: 4
+                            },
+                            {
+                                label: '55+ ans',
+                                data: [85, 20, 15],
+                                backgroundColor: accentColor1,
+                                borderRadius: 4
+                            }
+                        ]
+                    },
+                    options: {
+                        ...commonOptions,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100
+                            }
+                        }
+                    }
+                });
+            }
+
+        });
+    </script>
+</body>
+</html>
