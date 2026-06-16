@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
-import { db, auth } from '../firebase/config';
+import { db, auth } from '../../firebase/config';
 import { doc, getDoc } from 'firebase/firestore';
 
 // États réactifs pour stocker les données lues sur Firebase
@@ -54,24 +54,24 @@ const yearlyGrowth = 100;
 </script>
 
 <template>
-  <div class="max-w-6xl mx-auto w-full px-4 mb-6 font-['Inter']">
+  <div class="body max-w-7xl mx-auto w-full font-['Inter']">
     <div v-if="loading" class="h-28 bg-gray-200 animate-pulse rounded-[20px]"></div>
 
-    <div v-else class="bg-[#00AA90] text-white rounded-[20px] p-5 md:p-6 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-6 sm:gap-4 relative overflow-hidden">
+    <div v-else class="background-color text-white rounded-[20px] p-5 md:p-6 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-6 sm:gap-4 relative overflow-hidden">
       
       <div class="flex flex-col items-center sm:items-start z-10 w-full sm:w-auto text-center sm:text-left">
-        <div class="bg-white/15 backdrop-blur-md px-2.5 py-1 rounded-md flex items-center gap-1.5 mb-2">
-          <span class="text-xs">🛡️</span>
-          <span class="text-[9px] font-black uppercase tracking-wider">Mode Sécurité</span>
+        <div class="px-2.5 py-1 rounded-md flex items-center gap-1.5 mb-2">
+          <span class="text-xs"><svg class="w-6 h-6 text-[#94CFCA]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg></span>
+          <span class="heading text-xl opacity-90">Mode Sécurité</span>
         </div>
         
         <div class="flex flex-col">
-          <span class="text-3xl md:text-4xl font-black tracking-tight">
+          <span class="text-3xl md:text-4xl font-black heading tracking-tight">
             {{ globalNetWorth.toLocaleString() }} <span class="text-xl md:text-2xl font-bold">€</span>
           </span>
-          <div class="flex items-center justify-center sm:justify-start gap-1 mt-0.5 text-white/80">
+          <div class="flex items-center justify-center heading sm:justify-start gap-1 mt-0.5 ">
             <span class="text-xs font-bold">↗</span>
-            <span class="text-[11px] font-bold">{{ yearlyGrowth }} € <span class="font-medium opacity-75">cette année</span></span>
+            <span class="text-[11px] heading">{{ yearlyGrowth }} € <span class="font-medium opacity-75">cette année</span></span>
           </div>
         </div>
       </div>
@@ -79,24 +79,24 @@ const yearlyGrowth = 100;
       <div class="flex items-center justify-center sm:justify-end gap-10 md:gap-14 z-10 w-full sm:w-auto">
         
         <div class="flex flex-col items-end pr-10 md:pr-14 border-r border-white/20">
-          <h4 class="text-[10px] font-bold uppercase opacity-75 tracking-wide mb-0.5">Épargne</h4>
-          <span class="text-2xl md:text-3xl font-black">
-            {{ savingsPercentage }}<span class="text-base font-bold">%</span>
+          <h4 class="heading white tracking-wide mb-0.5">Épargne</h4>
+          <span class="text-2xl md:text-3xl font-black heading">
+            {{ savingsPercentage }}<span class="text-base font-bold heading">%</span>
           </span>
-          <div class="flex items-center gap-0.5 mt-0.5 text-white/80">
-            <span class="text-[10px] font-bold">↗</span>
-            <span class="text-[10px] font-bold">{{ savings.toLocaleString() }} €</span>
+          <div class="flex items-center gap-0.5 mt-0.5 heading">
+            <span class="text-[10px] font-bold heading">↗</span>
+            <span class="text-[10px] font-bold heading">{{ savings.toLocaleString() }} €</span>
           </div>
         </div>
 
         <div class="flex flex-col items-end">
-          <h4 class="text-[10px] font-bold uppercase opacity-75 tracking-wide mb-0.5">Investissement</h4>
-          <span class="text-2xl md:text-3xl font-black">
-            {{ investmentPercentage }}<span class="text-base font-bold">%</span>
+          <h4 class="heading white tracking-wide mb-0.5">Investissement</h4>
+          <span class="text-2xl md:text-3xl heading font-black">
+            {{ investmentPercentage }}<span class="text-base font-bold heading">%</span>
           </span>
-          <div class="flex items-center gap-0.5 mt-0.5 text-white/80">
-            <span class="text-[10px] font-bold">↗</span>
-            <span class="text-[10px] font-bold">{{ investment.toLocaleString() }} €</span>
+          <div class="flex items-center gap-0.5 mt-0.5 heading">
+            <span class="text-[10px] heading font-bold">↗</span>
+            <span class="text-[10px] heading font-bold">{{ investment.toLocaleString() }} €</span>
           </div>
         </div>
 

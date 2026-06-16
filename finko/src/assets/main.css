@@ -15,15 +15,27 @@ button{
   font-family: 'Inter', sans-serif;
   font-weight: 900;
 }
+.white{
+    color: white !important;
+}
+.background-color{
+    background-color: #00AA90;
+}
+.background-color-rose{
+    background-color: #F43F5E;
+}
 
 .heading{
  font-family: 'Inter', sans-serif;
  font-weight: 800;
- color: #00AA90 !important;
+ 
+}
+.green{
+    color: #00AA90 !important;
 }
 
 .button{
-    background-color: #0D9488;
+    background-color: #00AA90;
     box-shadow: 0px 4px 0px #086058;
     font-family: 'Inter', sans-serif;
     font-weight: 900;

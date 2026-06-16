@@ -49,7 +49,13 @@ const router = createRouter({
       name: 'register-4',
       component: () => import('../views/register/RegisterProjet.vue'),
       meta: { requiresAuth: true }
-    }
+    },
+    {
+      path: '/learning',
+      name: 'learning',
+      component: () => import('../views/EducationCours.vue'),
+      meta: { requiresAuth: true }
+    },
   ],
 })
 

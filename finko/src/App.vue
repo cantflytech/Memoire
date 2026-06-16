@@ -57,6 +57,14 @@ const handleLogout = async () => {
           >
             About
           </RouterLink>
+          <RouterLink 
+            to="/learning" 
+            class="text-gray-700 hover:text-emerald-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+            active-class="text-emerald-600 bg-emerald-50"
+          >
+            Learning
+          </RouterLink>
+        
 
           <!-- Section authentification -->
           <div class="flex items-center space-x-4">
