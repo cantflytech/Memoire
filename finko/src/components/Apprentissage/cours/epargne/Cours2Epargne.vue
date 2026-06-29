@@ -18,8 +18,8 @@ const monthsNeeded = computed(() => {
 </script>
 
 <template>
-  <main class="min-h-screen bg-[#F8FAFB] p-4 md:p-8 font-['Inter'] flex items-center justify-center">
-    <div class="max-w-3xl w-full bg-white rounded-[32px] border border-gray-100 shadow-sm overflow-hidden mt-12">
+  <main class="heading min-h-screen bg-[#F8FAFB] font-['Inter'] flex items-center justify-center">
+    <div class="max-w-7xl w-full bg-white rounded-[32px] border border-gray-100 shadow-sm overflow-hidden mt-12">
       
       <header class="bg-gradient-to-r from-[#00AA90] to-[#008F7A] p-6 text-white relative">
         <div class="flex justify-between items-start">
@@ -60,7 +60,7 @@ const monthsNeeded = computed(() => {
             'flex-1 text-center py-3.5 px-4 text-xs border-b-2 whitespace-nowrap transition-all'
           ]"
         >
-          Léçon {{ i }}
+          Leçon {{ i }}
         </button>
       </nav>
 

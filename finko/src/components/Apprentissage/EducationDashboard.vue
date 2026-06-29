@@ -72,42 +72,56 @@ onMounted(() => {
 </script>
 
 <template>
-  <div v-if="currentView === 'cours_epargne_1'" class="relative">
-    <button @click="currentView = 'menu'" class="absolute top-6 left-6 z-50 bg-white hover:bg-gray-100 text-gray-700 font-bold py-2 px-4 rounded-xl border border-gray-200 shadow-xs text-xs">
-      ← Retour aux chapitres
-    </button>
+<div v-if="currentView === 'cours_epargne_1'" class="min-h-screen bg-[#F8FAFB] py-6">
+  <div class="max-w-7xl mx-auto px-4 space-y-4">
+    
+    <div>
+      <button 
+        @click="currentView = 'menu'" 
+        class="heading bg-white hover:bg-gray-100 text-gray-700 font-bold py-2 px-4 rounded-xl border border-gray-200 shadow-xs text-xs transition-colors"
+      >
+        ← Retour aux chapitres
+      </button>
+    </div>
+
     <Cours1Epargne />
   </div>
+</div>
 
-  <div v-else-if="currentView === 'cours_epargne_2'" class="relative">
-    <button @click="currentView = 'menu'" class="absolute top-6 left-6 z-50 bg-white hover:bg-gray-100 text-gray-700 font-bold py-2 px-4 rounded-xl border border-gray-200 shadow-xs text-xs">
-      ← Retour aux chapitres
-    </button>
+<div v-else-if="currentView === 'cours_epargne_2'" class="min-h-screen bg-[#F8FAFB] py-6">
+  <div class="max-w-7xl mx-auto px-4 space-y-4">
+    <div>
+      <button @click="currentView = 'menu'" class="heading bg-white hover:bg-gray-100 text-gray-700 font-bold py-2 px-4 rounded-xl border border-gray-200 shadow-xs text-xs transition-colors">
+        ← Retour aux chapitres
+      </button>
+    </div>
     <Cours2Epargne />
   </div>
+</div>
 
-  <div v-else-if="currentView === 'cours_epargne_3'" class="relative">
-    <button @click="currentView = 'menu'" class="absolute top-6 left-6 z-50 bg-white hover:bg-gray-100 text-gray-700 font-bold py-2 px-4 rounded-xl border border-gray-200 shadow-xs text-xs">
-      ← Retour aux chapitres
-    </button>
-    <Cours3Epargne />
-  </div>
-
-  <div v-else-if="currentView === 'cours_invest_1'" class="relative">
-    <button @click="currentView = 'menu'" class="absolute top-6 left-6 z-50 bg-white hover:bg-gray-100 text-gray-700 font-bold py-2 px-4 rounded-xl border border-gray-200 shadow-xs text-xs">
-      ← Retour aux chapitres
-    </button>
+<div v-else-if="currentView === 'cours_invest_1'" class="min-h-screen bg-[#F8FAFB] py-6">
+  <div class="max-w-7xl mx-auto px-4 space-y-4">
+    <div>
+      <button @click="currentView = 'menu'" class="heading bg-white hover:bg-gray-100 text-gray-700 font-bold py-2 px-4 rounded-xl border border-gray-200 shadow-xs text-xs transition-colors">
+        ← Retour aux chapitres
+      </button>
+    </div>
     <Cours1Invest />
   </div>
+</div>
 
-  <div v-else-if="currentView === 'cours_invest_2'" class="relative">
-    <button @click="currentView = 'menu'" class="absolute top-6 left-6 z-50 bg-white hover:bg-gray-100 text-gray-700 font-bold py-2 px-4 rounded-xl border border-gray-200 shadow-xs text-xs">
-      ← Retour aux chapitres
-    </button>
+<div v-else-if="currentView === 'cours_invest_2'" class="min-h-screen bg-[#F8FAFB] py-6">
+  <div class="max-w-7xl mx-auto px-4 space-y-4">
+    <div>
+      <button @click="currentView = 'menu'" class="heading bg-white hover:bg-gray-100 text-gray-700 font-bold py-2 px-4 rounded-xl border border-gray-200 shadow-xs text-xs transition-colors">
+        ← Retour aux chapitres
+      </button>
+    </div>
     <Cours2Invest />
   </div>
+</div>
 
-  <main v-else-if="currentView === 'menu'" class="min-h-screen bg-[#F8FAFB] p-4 md:p-8 font-['Inter']">
+  <main v-else-if="currentView === 'menu'" class="heading min-h-screen bg-[#F8FAFB] p-4 md:p-8 font-['Inter']">
     <div class="max-w-7xl mx-auto space-y-8">
       
       <div class="text-center space-y-2">
@@ -182,16 +196,7 @@ onMounted(() => {
                 <span class="text-[9px] font-black tracking-wider text-gray-500 bg-gray-100 px-2.5 py-1 rounded-md uppercase">Leçon</span>
               </div>
 
-              <div 
-                @click="currentView = 'cours_epargne_3'"
-                class="bg-white border border-gray-100 p-3 rounded-xl flex items-center justify-between shadow-xs cursor-pointer hover:border-[#00AA90] hover:bg-teal-50/10 transition-all group"
-              >
-                <div class="flex items-center gap-3">
-                  <span class="text-base text-[#00AA90] group-hover:scale-110 transition-transform">⚖️</span>
-                  <span class="text-xs font-bold text-gray-700 group-hover:text-[#00AA90]">Épargner vs Investir</span>
-                </div>
-                <span class="text-[9px] font-black tracking-wider text-gray-500 bg-gray-100 px-2.5 py-1 rounded-md uppercase">Leçon</span>
-              </div>
+              
 
             </div>
           </div>
@@ -257,7 +262,7 @@ onMounted(() => {
                   <span class="text-base text-indigo-500 group-hover:scale-110 transition-transform">💎</span>
                   <span class="text-xs font-bold text-gray-700 group-hover:text-[#5B51F4]">Choisir son enveloppe fiscale (PEA vs AV)</span>
                 </div>
-                <span class="text-[9px] font-black tracking-wider text-indigo-500 bg-indigo-50 px-2.5 py-1 rounded-md uppercase">Quizz</span>
+                <span class="text-[9px] font-black tracking-wider text-indigo-500 bg-indigo-50 px-2.5 py-1 rounded-md uppercase">Leçon</span>
               </div>
 
             </div>

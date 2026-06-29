@@ -16,28 +16,28 @@ const calculateUserSavings = () => {
 };
 </script>
 
-<template>
-  <main class="min-h-screen bg-[#F8FAFB] p-4 md:p-8 font-['Inter'] flex justify-center">
-    <div class="max-w-3xl w-full bg-white rounded-[32px] border border-gray-100 shadow-sm overflow-hidden">
+<template class="heading">
+  <main class="max-w-7xl mx-auto bg-[#F8FAFB] font-['Inter'] flex justify-center">
+    <div class="max-w-7xl w-full bg-white rounded-[32px] border border-gray-100 shadow-sm overflow-hidden">
       
       <header class="bg-gradient-to-r from-[#00AA90] to-[#008F7A] p-6 text-white relative">
         <div class="flex justify-between items-start">
           <div class="space-y-1">
             <div class="bg-white/20 backdrop-blur-md px-2.5 py-0.5 rounded-md inline-flex items-center gap-1.5">
               <span class="text-xs">📖</span>
-              <span class="text-[9px] font-black uppercase tracking-wider">Chapitre 1 : Les Fondations</span>
+              <span class="text-[9px] heading font-black uppercase tracking-wider">Chapitre 1 : Les Fondations</span>
             </div>
-            <h1 class="text-2xl font-black tracking-tight">Comprendre son budget</h1>
+            <h1 class="text-2xl heading font-black tracking-tight">Comprendre son budget</h1>
           </div>
           <span class="text-3xl">💰</span>
         </div>
 
-        <p class="text-xs text-teal-50 font-medium italic mt-4 border-l-2 border-white/30 pl-3 max-w-xl">
+        <p class="text-xs heading text-teal-50 font-medium italic mt-4 border-l-2 border-white/30 pl-3 max-w-xl">
           "Beaucoup rêvent d'investir. Peu savent où part leur argent. Un capitaine qui ne connaît pas sa cargaison finit sur les récifs."
         </p>
 
         <div class="mt-6 space-y-1.5">
-          <div class="flex justify-between text-[10px] font-bold text-teal-100">
+          <div class="flex heading justify-between text-[10px] font-bold text-teal-100">
             <span>Progression de la leçon</span>
             <span>{{ Math.round((activeLesson / 6) * 100) }}%</span>
           </div>
@@ -50,7 +50,7 @@ const calculateUserSavings = () => {
         </div>
       </header>
 
-      <nav class="flex border-b border-gray-100 overflow-x-auto bg-gray-50/50 scrollbar-none">
+      <nav class="flex heading border-b border-gray-100 overflow-x-auto bg-gray-50/50 scrollbar-none">
         <button 
           v-for="i in 6" 
           :key="i"
@@ -62,11 +62,11 @@ const calculateUserSavings = () => {
             'flex-1 text-center py-3.5 px-4 text-xs border-b-2 whitespace-nowrap transition-all'
           ]"
         >
-          Léçon {{ i }}
+          Leçon {{ i }}
         </button>
       </nav>
 
-      <div class="p-6 md:p-8 min-h-[350px]">
+      <div class="p-6 md:p-8 min-h-[350px] heading">
         
         <div v-if="activeLesson === 1" class="space-y-5 animate-fade-in">
           <h2 class="text-lg font-black text-gray-900">Leçon 1 : Pourquoi faire un budget ?</h2>

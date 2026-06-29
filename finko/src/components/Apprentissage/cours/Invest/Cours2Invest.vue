@@ -24,8 +24,8 @@ const totalInterestsEarned = computed(() => {
 </script>
 
 <template>
-  <main class="min-h-screen bg-[#F8FAFB] p-4 md:p-8 font-['Inter'] flex items-center justify-center">
-    <div class="max-w-3xl w-full bg-white rounded-[32px] border border-gray-100 shadow-sm overflow-hidden mt-12">
+  <main class="heading min-h-screen bg-[#F8FAFB] font-['Inter'] flex items-center justify-center">
+    <div class="max-w-7xl w-full bg-white rounded-[32px] border border-gray-100 shadow-sm overflow-hidden mt-12">
       
       <header class="bg-gradient-to-r from-[#5B51F4] to-[#473EE0] p-6 text-white">
         <div class="flex justify-between items-start">
