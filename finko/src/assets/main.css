@@ -4,6 +4,9 @@
     background-color: #00AA90;
    
 }
+.background-color-purple{
+    background-color: #6366F1;
+}
 .disable-color{
     background-color: #F0F0F0;
 }
@@ -34,17 +37,35 @@ button{
     color: #00AA90 !important;
 }
 
-.button{
+.button {
+    display: flex;             /* Aligne l'icône et le texte proprement */
+    align-items: center;       /* Centre verticalement */
+    justify-content: center;   /* Centre horizontalement */
+    gap: 8px;                  /* Espace entre l'icône ↗ et le texte */
+    width: 100%;               /* Prend toute la largeur de son conteneur proprement */
+    box-sizing: border-box;    /* Évite que les paddings fassent déborder le bouton */
+    
     background-color: #00AA90;
-    box-shadow: 0px 4px 0px #086058;
+    color: white !important;
     font-family: 'Inter', sans-serif;
-    font-weight: 900;
-    color: white;
-    border-radius: 10px;
-    padding: 10px 20px;
-    margin: 5px;
+    font-weight: 900; 
+    font-size: 13px;           /* Taille de police ajustée */
+    
+    padding: 12px 20px;
+    border-radius: 16px;       /* Pour avoir les beaux bords arrondis de Finko */
+    
+    /* Style Néo-brutaliste qui s'écrase proprement au clic */
+    border: none;
+    box-shadow: 0px 4px 0px #086058;
+    transition: all 0.1s ease-in-out;
+    cursor: pointer;
+    
+    /* Marges nettoyées pour éviter les chevauchements */
+    margin-top: 16px;
+    margin-bottom: 5px;
+    margin-left: 0;
+    margin-right: 0;
 }
-
 .yellow{
     background-color: #FFFAEB;
     border-color: #F59E0B;

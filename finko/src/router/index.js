@@ -21,15 +21,15 @@ const router = createRouter({
       component: () => import('../views/AboutView.vue'),
     },
     {
-      path: '/dashboard-epargne',
-      name: 'dashboard-epargne',
-      component: () => import('../views/DashboardEpargne.vue'),
+      path: '/dashboard-Investissement',
+      name: 'dashboard-Investissement',
+      component: () => import('../views/DashboardInvestissement.vue'),
       meta: { requiresAuth: true }
     },
     {
-      path: '/dashboard-placeholder',
-      name: 'dashboard-placeholder',
-      component: () => import('../views/DashboardPlaceholder.vue'),
+      path: '/dashboard-Epargne',
+      name: 'dashboard-Epargne',
+      component: () => import('../views/DashboardEpargne.vue'),
       meta: { requiresAuth: true }
     },
     {
@@ -56,6 +56,30 @@ const router = createRouter({
       component: () => import('../views/EducationCours.vue'),
       meta: { requiresAuth: true }
     },
+    {
+      path:'/catalogue-epargne',
+      name: 'catalogue-epargne',
+      component: () => import('../components/epargne/souspages/CatalogueEpargne.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path:'/details-livret-epargne',
+      name: 'details-livret-epargne',
+      component: () => import('../components/epargne/souspages/DetailslivretEpargne.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path:'/actualiser-mes-livrets',
+      name: 'actualiser-mes-livrets',
+      component: () => import('../components/epargne/souspages/ActualiseEpargne.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path:'/objectif-vie-epargne',
+      name: 'objectif-vie-epargne',
+      component: () => import('../components/epargne/souspages/ObjectifvieEpargne.vue'),
+      meta: { requiresAuth: true }
+    }
   ],
 })
 

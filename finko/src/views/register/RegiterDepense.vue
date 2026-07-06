@@ -1,9 +1,10 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import { db, auth } from '../../firebase/config';
-// CORRECTION : On importe setDoc à la place de updateDoc
 import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const editIncome = ref(1500);
 const editExpenses = ref(500);
 const loading = ref(true);
@@ -11,6 +12,12 @@ const loading = ref(true);
 // Calculs dynamiques pour l'affichage
 const annualIncome = computed(() => editIncome.value * 12);
 const annualExpenses = computed(() => editExpenses.value * 12);
+
+// --- NOUVEAU : Calcul automatique de l'objectif d'épargne mensuel ---
+const monthlySavingsTarget = computed(() => {
+  const target = editIncome.value - editExpenses.value;
+  return target > 0 ? target : 0; // Évite un objectif négatif si les dépenses dépassent les revenus
+});
 
 // On définit le multiplicateur (ici 3 mois comme sur ton image)
 const monthsTarget = ref(3);
@@ -37,16 +44,18 @@ const saveStep = async () => {
   try {
     const profileRef = doc(db, "user_financial_profile", user.uid);
     
-    // CORRECTION : setDoc + merge: true gère la création ET la mise à jour sans crash
+    // Sauvegarde enrichie avec le monthly_savings_target
     await setDoc(profileRef, {
       user_financial_profile: {
         monthly_income: editIncome.value,
         monthly_expenses: editExpenses.value,
+        monthly_savings_target: monthlySavingsTarget.value, // Enregistré ici pour le dashboard !
         emergency_fund_target: emergencyFundTarget.value
       }
     }, { merge: true });
     
     alert("Étape enregistrée !");
+    router.push('/register-3')
   } catch (e) {
     console.error("Erreur lors de la sauvegarde :", e);
   }
@@ -56,14 +65,12 @@ onMounted(fetchData);
 </script>
 
 <template>
-  <main class="min-h-screen bg-[#F8FAFB] p-6 font-['Inter']">
-    <div class="max-w-4xl mx-auto">
+  <main class="min-h-screen bg-[#F8FAFC] p-6 font-['Inter']">
+    <div class="max-w-4xl mx-auto heading">
       
       <header class="flex justify-between items-center mb-8">
         <div class="flex items-center gap-4">
-          <button class="p-2 bg-white rounded-lg border border-gray-100 shadow-sm text-gray-400">
-            <span class="text-xl">←</span>
-          </button>
+          <RouterLink to="/login" class="p-2 bg-white rounded-lg border border-gray-100 shadow-sm text-gray-400 text-xl">←</RouterLink>
           <div>
             <h1 class="text-xl font-black text-gray-900">Création de ton profil Financier</h1>
             <p class="text-sm text-gray-500 font-medium">étape 2/4 : Calcul de ton fond d'urgence</p>
@@ -83,12 +90,12 @@ onMounted(fetchData);
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <div class="bg-white p-6 rounded-2xl border border-gray-50 shadow-sm">
           <div class="flex items-center gap-2 mb-4">
-            <div class="bg-[#E6F6F4] p-1.5 rounded-md">🛡️</div>
-            <h3 class="text-[#00AA90] font-bold text-sm uppercase">Revenu mensuel Net</h3>
+            <div class="bg-[#E6F6F4] p-1.5 rounded-md"><img src="../../assets/Shield.png" alt="Shield" class="w-6 h-6" /></div>
+            <h3 class="green text-xl">Revenu mensuel Net</h3>
           </div>
           <div class="flex items-center gap-3 bg-gray-100 p-3 rounded-xl mb-4">
-            <input v-model.number="editIncome" type="number" class="bg-transparent font-black text-xl w-24 outline-none" />
-            <span class="font-bold text-gray-900">€ / mois</span>
+            <input v-model.number="editIncome" type="number" class="bg-transparent w-24 outline-none font-bold text-lg" />
+            <span class="font-bold text-xl">€ / mois</span>
           </div>
           <p class="text-right text-[#00AA90] text-xs font-bold italic">
             Ton Revenu moyen : ~{{ annualIncome.toLocaleString() }}€ / an
@@ -97,12 +104,12 @@ onMounted(fetchData);
 
         <div class="bg-white p-6 rounded-2xl border border-gray-50 shadow-sm">
           <div class="flex items-center gap-2 mb-4">
-            <div class="bg-[#E6F6F4] p-1.5 rounded-md">🛡️</div>
-            <h3 class="text-[#00AA90] font-bold text-sm uppercase">Dépense mensuel fixe</h3>
+            <div class="bg-[#E6F6F4] p-1.5 rounded-md"><img src="../../assets/Shield.png" alt="Shield" class="w-6 h-6" /></div>
+            <h3 class="green text-xl">Dépense mensuel fixe</h3>
           </div>
           <div class="flex items-center gap-3 bg-gray-100 p-3 rounded-xl mb-4">
-            <input v-model.number="editExpenses" type="number" class="bg-transparent font-black text-xl w-24 outline-none" />
-            <span class="font-bold text-gray-900">€ / mois</span>
+            <input v-model.number="editExpenses" type="number" class="bg-transparent w-24 outline-none font-bold text-lg" />
+            <span class="font-bold text-xl">€ / mois</span>
           </div>
           <p class="text-right text-[#00AA90] text-xs font-bold italic">
             Tes frais fixes : ~{{ annualExpenses.toLocaleString() }}€ / an
@@ -141,6 +148,10 @@ onMounted(fetchData);
              <div class="absolute -bottom-4 -left-2 text-3xl">🪙</div>
            </div>
         </div>
+      </div>
+
+      <div class="text-center mb-4 text-xs font-bold text-gray-400">
+        Capacité d'épargne mensuelle calculée : <span class="text-[#00AA90] font-black">{{ monthlySavingsTarget }} €</span>
       </div>
 
       <button 

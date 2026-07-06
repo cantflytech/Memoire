@@ -1,33 +1,48 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { db, auth } from '../../firebase/config';
-// CORRECTION : Ajout des imports Firestore manquants pour faire fonctionner les requêtes et l'ajout
-import { collection, query, where, getDocs, addDoc } from 'firebase/firestore';
+// CORRECTION : On utilise doc, getDoc et setDoc pour cibler directement le bon profil unique
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
-// États pour les données Firebase
+// États réactifs pour l'affichage dynamique
 const userXP = ref(0);
+const userLevel = ref(1);
 const loading = ref(true);
+
+// Constante de palier (3 000 XP par niveau, identique à tes autres pages)
+const xpPerLevel = 3000;
+
+// Propriété calculée pour la jauge si tu as besoin de l'afficher ici aussi
+const xpProgress = computed(() => {
+  const percentage = (userXP.value / xpPerLevel) * 100;
+  return Math.min(Math.round(percentage), 100);
+});
 
 onMounted(() => {
   auth.onAuthStateChanged(async (user) => {
     if (user) {
       try {
-        // 1. Récupération des données d'XP (Mode Éducation)
-        const coursesRef = collection(db, "Courses");
-        const q = query(coursesRef, where("userId", "==", user.uid));
-        const querySnapshot = await getDocs(q);
+        // CORRECTION CRITIQUE : Alignement parfait sur l'identifiant unique de ton utilisateur (UID)
+        const profileRef = doc(db, "user_financial_profile", user.uid);
+        const profileSnap = await getDoc(profileRef);
         
-        if (!querySnapshot.empty) {
-          // Si le document existe, on récupère l'XP normalement
-          const courseDoc = querySnapshot.docs[0].data();
-          userXP.value = courseDoc.XP || 0;
+        if (profileSnap.exists()) {
+          const data = profileSnap.data().user_financial_profile || profileSnap.data();
+          
+          // Récupération des données d'XP et de niveau unifiées
+          userXP.value = data.xp ?? 0;
+          userLevel.value = data.level ?? 1;
         } else {
-          // SECURITÉ : Si aucun document n'est trouvé pour cet userId, on en crée un automatiquement à 0 XP
-          await addDoc(coursesRef, {
-            userId: user.uid,
-            XP: 0
-          });
+          // SÉCURITÉ : Si aucun profil n'existe, on initialise proprement la structure
+          await setDoc(profileRef, {
+            user_financial_profile: {
+              xp: 0,
+              level: 1
+            }
+          }, { merge: true });
+          
           userXP.value = 0;
+          userLevel.value = 1;
         }
 
       } catch (e) {
@@ -41,7 +56,6 @@ onMounted(() => {
   });
 });
 </script>
-
 <template>
   <div class="body max-w-7xl mx-auto w-full font-['Inter']">
     <div v-if="loading" class="h-28 bg-gray-200 animate-pulse rounded-[20px]"></div>

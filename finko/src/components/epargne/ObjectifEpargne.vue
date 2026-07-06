@@ -2,7 +2,7 @@
 import { ref, onMounted, computed } from 'vue';
 import { db, auth } from '../../firebase/config';
 import { doc, getDoc, collection, getDocs } from 'firebase/firestore';
-
+import { useRouter } from 'vue-router';
 // États réactifs
 const lifeProjects = ref([]);
 const userAssets = ref([]);
@@ -145,9 +145,9 @@ const refreshData = () => {
           </div>
         </div>
 
-        <button class="button">
+        <RouterLink to="/objectif-vie-epargne" class="button">
           <span>↗</span> Voir en détails
-        </button>
+        </RouterLink>
       </div>
 
       <div class="bg-white p-6 rounded-[28px] shadow-xs border border-gray-100 flex flex-col justify-between">
@@ -210,16 +210,13 @@ const refreshData = () => {
         </div>
 
         <div class="flex gap-3 mt-8">
-          <button class="button">
+          <RouterLink to="/details-livret-epargne" class="button">
             <span>↗</span> Voir en détails
-          </button>
+          </RouterLink>
           
-          <button 
-            @click="refreshData"
-            class="px-4 bg-gray-50 text-gray-700 border border-gray-200 py-3 rounded-xl font-black flex items-center justify-center gap-2 hover:bg-gray-100 transition-all text-xs"
-          >
+          <RouterLink to="/actualiser-mes-livrets" class="button" style="background-color: #F1F5F9; color: #1E1E1E !important; border: 1px solid #E5E7EB; box-shadow: 0px 4px 0px #ACACAC;;"> 
             <span>↗</span> Actualiser
-          </button>
+          </RouterLink>
         </div>
 
       </div>

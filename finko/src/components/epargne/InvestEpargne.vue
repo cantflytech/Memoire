@@ -1,40 +1,65 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { db, auth } from '../../firebase/config';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, onSnapshot } from 'firebase/firestore'; // Utilisation de onSnapshot pour le temps réel
 
 // États réactifs pour stocker les données lues sur Firebase
 const savings = ref(0);     // total_wealth (Épargne)
 const investment = ref(0);  // total_investment (Investissements)
 const loading = ref(true);
+const unsubscribe = ref(null); // Pour couper l'écouteur proprement lors du démontage
 
 onMounted(() => {
-  auth.onAuthStateChanged(async (user) => {
+  auth.onAuthStateChanged((user) => {
     if (user) {
       try {
         const docRef = doc(db, "user_financial_profile", user.uid);
-        const docSnap = await getDoc(docRef);
+        
+        // 🔄 ÉCOUTEUR EN TEMPS RÉEL FIRESTORE
+        unsubscribe.value = onSnapshot(docRef, (docSnap) => {
+          if (docSnap.exists()) {
+            const rawData = docSnap.data();
+            
+            // 1. Extraction de l'investissement (directement à la racine du document)
+            investment.value = rawData.total_investment || 0;
+            
+            // 2. Extraction de l'épargne (située dans la map user_financial_profile)
+            if (rawData.user_financial_profile) {
+              savings.value = rawData.user_financial_profile.total_wealth || 0;
+            } else {
+              // Sécurité au cas où la map n'existe pas mais que le champ est à la racine
+              savings.value = rawData.total_wealth || 0;
+            }
+            
+            console.log("🔥 Données lues en direct :", { 
+              savings: savings.value, 
+              investment: investment.value 
+            });
+          }
+          loading.value = false;
+        }, (error) => {
+          console.error("Erreur d'écoute Firestore :", error);
+          loading.value = false;
+        });
 
-        if (docSnap.exists()) {
-          const data = docSnap.data().user_financial_profile || docSnap.data();
-          
-          // Liaison directe avec tes variables Firebase
-          savings.value = data.total_wealth || 0;
-          investment.value = data.total_investment || 0;
-        }
       } catch (e) {
-        console.error("Erreur lors du chargement de la barre de résumé:", e);
-      } finally {
+        console.error("Erreur lors du chargement de la barre de résumé :", e);
         loading.value = false;
-        console.log("Données chargées :", { savings: savings.value, investment: investment.value });
       }
     }
   });
 });
 
+// Nettoyage de l'écouteur si l'utilisateur change de page
+onUnmounted(() => {
+  if (unsubscribe.value) {
+    unsubscribe.value();
+  }
+});
+
 // --- CALCULS DYNAMIQUES CROISÉS ---
 
-// 1. Le Total Global (Le premier plus le deuxième)
+// 1. Le Total Global (Somme de l'épargne et de l'investissement)
 const globalNetWorth = computed(() => savings.value + investment.value);
 
 // 2. Pourcentage Épargne
@@ -49,7 +74,7 @@ const investmentPercentage = computed(() => {
   return Math.round((investment.value / globalNetWorth.value) * 100);
 });
 
-// Évolutions (Statiques ou à lier plus tard si tu crées des champs spécifiques)
+// Évolutions (Statiques pour le moment)
 const yearlyGrowth = 100;
 </script>
 
@@ -67,7 +92,7 @@ const yearlyGrowth = 100;
         
         <div class="flex flex-col">
           <span class="text-3xl md:text-4xl font-black heading tracking-tight">
-            {{ globalNetWorth.toLocaleString() }} <span class="text-xl md:text-2xl font-bold">€</span>
+            {{ savings.toLocaleString() }} <span class="text-xl md:text-2xl font-bold">€</span>
           </span>
           <div class="flex items-center justify-center heading sm:justify-start gap-1 mt-0.5 ">
             <span class="text-xs font-bold">↗</span>

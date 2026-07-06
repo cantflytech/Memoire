@@ -3,7 +3,8 @@ import { ref, onMounted } from 'vue';
 import { db, auth } from '../../firebase/config';
 // CORRECTION : setDoc est bien présent ici
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-
+import { useRouter } from 'vue-router'
+const router = useRouter()
 // Émojis populaires proposés pour le choix d'icône
 const quickIcons = ['🏠', '🚗', '✈️', '💍', '👶', '🎓', '👴', '💼', '🚀', '💰'];
 
@@ -86,6 +87,7 @@ const saveStep = async () => {
     }, { merge: true });
 
     alert("Profil financier complété avec succès !");
+    router.push('/dashboard-Epargne'); // Redirige vers le tableau de bord ou la page souhaitée
   } catch (e) {
     console.error("Erreur lors de la sauvegarde :", e);
   }
@@ -93,8 +95,8 @@ const saveStep = async () => {
 </script>
 
 <template>
-  <main class="min-h-screen bg-[#F8FAFB] p-4 md:p-6 font-['Inter'] flex items-center justify-center">
-    <div class="max-w-xl w-full bg-white p-6 md:p-8 rounded-[32px] shadow-sm border border-gray-100">
+    <main class="min-h-screen bg-[#F8FAFB] p-6 font-['Inter']">
+    <div class="max-w-4xl mx-auto heading">
       
       <div v-if="loading" class="text-center py-12 text-gray-400 font-medium">
         Chargement de tes projets...
@@ -102,19 +104,22 @@ const saveStep = async () => {
 
       <div v-else class="space-y-6">
         <header class="flex justify-between items-center">
+          <div class="flex items-center gap-4">
+          <RouterLink to="/register-3" class="p-2 bg-white rounded-lg border border-gray-100 shadow-sm text-gray-400 text-xl">←</RouterLink>
           <div>
             <h1 class="text-xl font-black text-gray-900">Création de ton profil Financier</h1>
-            <p class="text-xs font-bold text-[#00AA90] mt-0.5">étape 4/4 : Tes projets de vie</p>
+              <p class="text-sm text-gray-500 font-medium">étape 4/4 : Tes projets de vie</p>
+          </div>
           </div>
           <div class="flex gap-1.5">
-            <div class="w-6 h-1.5 rounded-full bg-[#00AA90]"></div>
-            <div class="w-6 h-1.5 rounded-full bg-[#00AA90]"></div>
-            <div class="w-6 h-1.5 rounded-full bg-[#00AA90]"></div>
-            <div class="w-6 h-1.5 rounded-full bg-[#00AA90]"></div>
+            <div class="w-6 h-2 rounded-full bg-[#00AA90]"></div>
+            <div class="w-6 h-2 rounded-full bg-[#00AA90]"></div>
+            <div class="w-6 h-2 rounded-full bg-[#00AA90]"></div>
+            <div class="w-6 h-2 rounded-full bg-[#00AA90]"></div>
           </div>
         </header>
 
-        <section class="bg-gray-50 p-4 rounded-2xl border border-gray-100 space-y-4">
+        <section class="bg-gray-50 p-4  bg-white rounded-2xl border border-gray-100 space-y-4">
           <h2 class="text-xs font-black text-gray-800 uppercase tracking-wider">
             ➕ Ajouter un nouveau projet
           </h2>

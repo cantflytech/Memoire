@@ -2,7 +2,7 @@
 import { ref, onMounted, computed } from 'vue';
 import { db, auth } from '../../firebase/config';
 import { collection, getDocs, doc, getDoc, query, orderBy } from 'firebase/firestore';
-
+import { useRouter } from 'vue-router'
 const categories = ref([]);
 const userAssets = ref([]);
 const allProducts = ref([]);
@@ -183,9 +183,9 @@ const getWidth = (index) => {
           </div>
         </div>
 
-        <button class="button">
+        <RouterLink to="/catalogue-epargne" class="button">
           <span>↗</span> Voir mes livrets en détails
-        </button>
+        </RouterLink>
 
       </div>
 

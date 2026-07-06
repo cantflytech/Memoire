@@ -3,7 +3,8 @@ import { ref, onMounted, computed } from 'vue';
 import { db, auth } from '../../firebase/config';
 // CORRECTION : On importe setDoc à la place de updateDoc
 import { doc, getDoc, setDoc, collection, getDocs } from 'firebase/firestore';
-
+import { useRouter } from 'vue-router'
+const router = useRouter()
 // États réactifs
 const searchQuery = ref('');
 const allProducts = ref([]); 
@@ -104,29 +105,35 @@ const saveAssets = async () => {
     }, { merge: true });
 
     alert("Tes placements ont bien été enregistrés !");
+    router.push('/register-4'); // Redirige vers l'étape suivante
   } catch (e) {
     console.error("Erreur lors de la sauvegarde :", e);
   }
 };
 </script>
-
 <template>
-  <main class="min-h-screen bg-[#F8FAFB] p-6 font-['Inter']">
-    <div class="max-w-xl mx-auto">
+  <main class="min-h-screen bg-[#F8FAFC] p-6 font-['Inter']">
+    <div class="max-w-4xl mx-auto heading">
       
       <header class="flex justify-between items-center mb-8">
-        <div>
-          <h1 class="text-xl font-black text-gray-900">Création de ton profil Finacier</h1>
-          <p class="text-xs text-gray-500 font-medium">étape 3/4 : Tes placements actuels</p>
+        <div class="flex items-center gap-4">
+          <RouterLink to="/register-2" class="p-2 bg-white rounded-lg border border-gray-100 shadow-sm text-gray-400 text-xl">←</RouterLink>
+          <div>
+            <h1 class="text-xl font-black text-gray-900">Création de ton profil Financier</h1>
+            <p class="text-sm text-gray-500 font-medium">étape 3/4 : Tes placements actuels</p>
+          </div>
         </div>
-        <div class="flex gap-1">
-          <div class="w-6 h-1.5 rounded-full bg-[#00AA90]"></div>
-          <div class="w-6 h-1.5 rounded-full bg-[#00AA90]"></div>
-          <div class="w-6 h-1.5 rounded-full bg-[#00AA90]"></div>
-          <div class="w-6 h-1.5 rounded-full bg-gray-200"></div>
+        <div class="flex items-center gap-2">
+          <div class="flex gap-1">
+            <div class="w-6 h-2 rounded-full bg-[#00AA90]"></div>
+            <div class="w-6 h-2 rounded-full bg-[#00AA90]"></div>
+            <div class="w-6 h-2 rounded-full bg-[#00AA90]"></div>
+            <div class="w-6 h-2 rounded-full bg-gray-200"></div>
+          </div>
         </div>
       </header>
 
+      <!-- Barre de recherche -->
       <div class="relative mb-6">
         <div class="flex items-center bg-white border border-gray-200 rounded-xl px-4 py-3 shadow-sm focus-within:border-[#00AA90] transition-colors">
           <span class="text-gray-400 mr-3 text-sm">🔍</span>
@@ -153,62 +160,82 @@ const saveAssets = async () => {
         </div>
       </div>
 
+      <!-- Liste des livrets OU État vide -->
       <div class="space-y-4 mb-8">
-        <div 
-          v-for="(asset, index) in userAssets" 
-          :key="asset.product_id"
-          class="bg-white p-5 rounded-2xl border border-gray-100 shadow-xs relative group"
-        >
-          <button 
-            @click="removeAsset(index)" 
-            class="absolute top-4 right-4 text-gray-300 hover:text-red-500 transition-colors text-xs"
+        
+        <!-- CAS 1 : L'utilisateur a sélectionné des livrets -->
+        <template v-if="userAssets.length > 0">
+          <div 
+            v-for="(asset, index) in userAssets" 
+            :key="asset.product_id"
+            class="bg-white p-5 rounded-2xl border border-gray-100 shadow-xs relative group"
           >
-            ✕
-          </button>
-          
-          <div class="flex items-center gap-2 mb-4">
-            <div class="bg-[#E6F6F4] p-1.5 rounded-lg text-[#00AA90] text-xs">🛡️</div>
-            <h3 class="text-[#00AA90] font-black text-xs uppercase tracking-wider">{{ asset.name }}</h3>
-          </div>
+            <button 
+              @click="removeAsset(index)" 
+              class="absolute top-4 right-4 text-gray-300 hover:text-red-500 transition-colors text-xs"
+            >
+              ✕
+            </button>
+            
+            <div class="flex items-center gap-2 mb-4">
+              <div class="bg-[#E6F6F4] p-1.5 rounded-lg text-[#00AA90] text-xs">🛡️</div>
+              <h3 class="text-[#00AA90] font-black text-xs uppercase tracking-wider">{{ asset.name }}</h3>
+            </div>
 
-          <div class="flex justify-between items-end">
-            <div class="space-y-1">
-              <label class="block text-[10px] font-bold text-gray-400 uppercase">Montant sur le compte :</label>
-              <div class="flex items-center gap-1.5 border-b border-gray-200 pb-1 focus-within:border-[#00AA90]">
-                <input 
-                  v-model.number="asset.amount" 
-                  type="number" 
-                  class="text-xl font-black text-gray-900 w-32 outline-none"
-                />
-                <span class="text-lg font-black text-gray-900">€</span>
+            <div class="flex justify-between items-end">
+              <div class="space-y-1">
+                <label class="block text-[10px] font-bold text-gray-400 uppercase">Montant sur le compte :</label>
+                <div class="flex items-center gap-1.5 border-b border-gray-200 pb-1 focus-within:border-[#00AA90]">
+                  <input 
+                    v-model.number="asset.amount" 
+                    type="number" 
+                    class="text-xl font-black text-gray-900 w-32 outline-none"
+                  />
+                  <span class="text-lg font-black text-gray-900">€</span>
+                </div>
+              </div>
+
+              <div class="flex flex-col items-end gap-1.5">
+                <span 
+                  v-if="checkIsInstant(asset.product_id)"
+                  class="text-[9px] font-bold text-[#00AA90] bg-[#E6F6F4] px-2 py-0.5 rounded"
+                >
+                  RETRAIT INSTANTANÉ
+                </span>
+                <span 
+                  v-else
+                  class="text-[9px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded"
+                >
+                  BLOQUÉ {{ getProductInfo(asset.product_id).lock_duration_months }} MOIS
+                </span>
+
+                <span 
+                  v-if="checkIsFull(asset)"
+                  class="text-[9px] font-black text-white bg-red-500 px-2 py-0.5 rounded shadow-xs"
+                >
+                  PLEIN
+                </span>
               </div>
             </div>
-
-            <div class="flex flex-col items-end gap-1.5">
-              <span 
-                v-if="checkIsInstant(asset.product_id)"
-                class="text-[9px] font-bold text-[#00AA90] bg-[#E6F6F4] px-2 py-0.5 rounded"
-              >
-                RETRAIT INSTANTANÉ
-              </span>
-              <span 
-                v-else
-                class="text-[9px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded"
-              >
-                BLOQUÉ {{ getProductInfo(asset.product_id).lock_duration_months }} MOIS
-              </span>
-
-              <span 
-                v-if="checkIsFull(asset)"
-                class="text-[9px] font-black text-white bg-red-500 px-2 py-0.5 rounded shadow-xs"
-              >
-                PLEIN
-              </span>
-            </div>
           </div>
-        </div>
+        </template>
+
+        <!-- CAS 2 : État vide (Aucun livret ajouté) -->
+        <template v-else>
+          <div class="bg-white border border-dashed border-gray-200 rounded-3xl p-8 text-center flex flex-col items-center justify-center min-h-[220px]">
+            <div class="w-12 h-12 bg-gray-50 border border-gray-100 rounded-2xl flex items-center justify-center text-gray-400 mb-4 shadow-sm">
+              🔍
+            </div>
+            <h3 class="text-sm font-black text-gray-800 mb-1">Aucun livret renseigné</h3>
+            <p class="text-xs font-semibold text-gray-400 max-w-sm leading-relaxed">
+              Utilisez la barre de recherche ci-dessus pour rechercher et ajouter les livrets ou comptes d'épargne que vous possédez actuellement.
+            </p>
+          </div>
+        </template>
+
       </div>
 
+      <!-- Footer et sauvegarde -->
       <div class="text-center border-t border-gray-100 pt-6">
         <h2 class="text-sm font-bold text-gray-800 mb-5">
           Patrimoine total : <span class="text-2xl font-black text-gray-900 ml-1">{{ totalPatrimoine.toLocaleString() }} €</span>

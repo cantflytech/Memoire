@@ -1,7 +1,7 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { db, auth } from '../../firebase/config';
-import { collection, query, where, getDocs, doc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 // IMPORTATIONS DES COMPOSANTS DE COURS
 import Cours1Epargne from './cours/epargne/Cours1Epargne.vue'; 
@@ -13,17 +13,29 @@ import Cours2Invest from './cours/Invest/Cours2Invest.vue';
 // Valeurs : 'menu' / 'cours_epargne_1' / 'cours_epargne_2' / 'cours_epargne_3' / 'cours_invest_1' / 'cours_invest_2'
 const currentView = ref('menu');
 
-// États pour les niveaux de l'utilisateur provenant de Firebase
+// États pour l'expérience et les paliers d'apprentissage de l'utilisateur
+const userLevel = ref(1); // Niveau global de l'utilisateur (ex: Niveau 5)
+const userXP = ref(0);    // XP accumulé dans le niveau actuel
+const loading = ref(true);
+
+// Optionnel : si tu conserves des sous-niveaux spécifiques par thématique
 const nivEpargne = ref(0);
 const nivInvest = ref(0);
-const userXP = ref(0);
-const loading = ref(true);
 
 // Accordéons ouverts par défaut (true = ouvert)
 const openChapitreEpargne = ref(true);
 const openChapitreInvest = ref(true);
 
-// Titres dynamiques des badges selon le niveau de l'utilisateur (0 à 4)
+// Constante de palier d'XP (3 000 XP par niveau, identique à la validation des cours)
+const xpPerLevel = 3000;
+
+// Calcul du pourcentage de progression pour la jauge d'XP supérieure
+const xpProgress = computed(() => {
+  const percentage = (userXP.value / xpPerLevel) * 100;
+  return Math.min(Math.round(percentage), 100);
+});
+
+// Titres dynamiques des badges selon le niveau de l'utilisateur (0 à 4+)
 const levelTitles = {
   0: 'Novice économe',
   1: 'Apprenti économe',
@@ -40,29 +52,42 @@ const investTitles = {
   4: 'Investisseur Expert'
 };
 
+// Récupération dynamique du titre selon le niveau actuel
+const currentSavingsTitle = computed(() => {
+  return levelTitles[userLevel.value] || levelTitles[4];
+});
+
 onMounted(() => {
   auth.onAuthStateChanged(async (user) => {
     if (user) {
       try {
-        const coursesRef = collection(db, "Courses");
-        const q = query(coursesRef, where("userId", "==", user.uid));
-        const querySnapshot = await getDocs(q);
+        // CORRECTION CRITIQUE : Ciblage direct du document par l'UID (cohérent avec setDoc de tes autres pages)
+        const profileRef = doc(db, "user_financial_profile", user.uid);
+        const profileSnap = await getDoc(profileRef);
 
-        if (!querySnapshot.empty) {
-          const courseDoc = querySnapshot.docs[0].data();
-          nivEpargne.value = courseDoc.Niv_epargne ?? 0;
-          nivInvest.value = courseDoc.Niv_Invest ?? 0;
-          userXP.value = courseDoc.XP ?? 0;
+        if (profileSnap.exists()) {
+          const data = profileSnap.data().user_financial_profile || profileSnap.data();
+          
+          // Lecture des clés standardisées partagées entre tes composants
+          userXP.value = data.xp ?? 0;
+          userLevel.value = data.level ?? 1;
+          
+          // Optionnel : Récupération de sous-niveaux spécifiques si tu les utilises
+          nivEpargne.value = data.Niv_epargne ?? 0;
+          nivInvest.value = data.Niv_Invest ?? 0;
         } else {
-          await setDoc(doc(coursesRef), {
-            userId: user.uid,
-            Niv_epargne: 0,
-            Niv_Invest: 0,
-            XP: 0
-          });
+          // Si aucun profil financier n'existe, on initialise proprement la structure
+          await setDoc(profileRef, {
+            user_financial_profile: {
+              xp: 0,
+              level: 1,
+              Niv_epargne: 0,
+              Niv_Invest: 0
+            }
+          }, { merge: true });
         }
       } catch (e) {
-        console.error("Erreur lors du chargement des cours :", e);
+        console.error("Erreur lors du chargement du profil d'apprentissage :", e);
       } finally {
         loading.value = false;
       }

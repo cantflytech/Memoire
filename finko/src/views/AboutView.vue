@@ -1,16 +1,25 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { db, auth } from '../firebase/config';
-import { doc, getDoc, collection, query, where, getDocs, addDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, collection, query, where, getDocs, addDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 
 // --- ÉTATS RÉACTIFS ---
 const loading = ref(true);
-const updatingPrices = ref(false); // Pour l'animation du bouton rafraîchir
+const updatingPrices = ref(false); 
 const activeTab = ref('Tous');
 
+// États pour l'Auto-Refresh automatique toutes les 15 minutes
+const refreshIntervalInstance = ref(null);
+const nextAutoUpdateTime = ref(900); 
+
+// États pour les modales de modification de positions
+const showEditModal = ref(false);
+const selectedPosition = ref(null);
+const transactionAmountEur = ref(0); 
+
 // Données du profil financier (Bannière haute)
-const savings = ref(0);     // total_wealth
-const investment = ref(0);  // total_investment
+const savings = ref(0);     
+const investment = ref(0);  // Sera synchronisé en temps réel avec Firebase
 
 // Liste des positions de l'utilisateur
 const positions = ref([]);
@@ -21,7 +30,7 @@ const newAsset = ref({
   name: '',
   ticker: '',
   category: 'Crypto',
-  invested_amount_eur: 0 // On stocke directement les Euros mis au départ !
+  invested_amount_eur: 0 
 });
 
 // --- API FINANCIAL & RECALCUL EN DIRECT (BINANCE) ---
@@ -37,7 +46,6 @@ const fetchLivePrice = async (ticker) => {
       const data = await res.json();
       return parseFloat(data.price);
     }
-    // Simulation pour les actions ou autres tickers
     return Math.floor(Math.random() * (250 - 50 + 1)) + 50; 
   } catch (error) {
     console.error("Erreur d'appel API prix pour " + ticker, error);
@@ -45,13 +53,13 @@ const fetchLivePrice = async (ticker) => {
   }
 };
 
-// --- CHARGEMENT ET MISE À JOUR DES COURS ---
+// --- CHARGEMENT ET MISE À JOUR DES COURS + MISE À JOUR DU TOTAL FIRESTORE ---
 const loadDashboardData = async (user, forceRefresh = false) => {
   try {
     if (forceRefresh) updatingPrices.value = true;
     else loading.value = true;
     
-    // 1. Charger les totaux depuis user_financial_profile
+    // 1. Charger l'épargne depuis user_financial_profile
     const profileRef = doc(db, "user_financial_profile", user.uid);
     const profileSnap = await getDoc(profileRef);
     if (profileSnap.exists()) {
@@ -65,80 +73,155 @@ const loadDashboardData = async (user, forceRefresh = false) => {
     const querySnapshot = await getDocs(q);
     
     const localPositions = [];
+    let calculatedTotal = 0; // Variable temporaire pour calculer la somme exacte en direct
     
     for (const document of querySnapshot.docs) {
       const posData = document.data();
       const livePrice = await fetchLivePrice(posData.ticker);
       
       let currentPrice = posData.current_price_eur || posData.buy_price_eur;
+      let totalValueAsset = posData.quantity * currentPrice;
+
       if (livePrice) {
         currentPrice = livePrice;
+        totalValueAsset = posData.quantity * currentPrice;
         
-        // Recalculer le pourcentage d'évolution global de la position par rapport au prix d'achat
         const changePercent = ((currentPrice - posData.buy_price_eur) / posData.buy_price_eur) * 100;
 
-        // On met à jour Firebase avec le dernier cours du marché et la nouvelle valeur en temps réel
+        // Mise à jour de la position individuelle dans Firestore
         const posDocRef = doc(db, "user_investment_positions", document.id);
         await updateDoc(posDocRef, {
           current_price_eur: currentPrice,
-          total_value_eur: posData.quantity * currentPrice,
+          total_value_eur: totalValueAsset,
           monthly_change_percent: parseFloat(changePercent.toFixed(2))
         });
       }
+
+      // Cumul pour obtenir le total exact du portefeuille réévalué
+      calculatedTotal += totalValueAsset;
 
       localPositions.push({
         id: document.id,
         ...posData,
         current_price_eur: currentPrice,
-        total_value_eur: posData.quantity * currentPrice,
+        total_value_eur: totalValueAsset,
         monthly_change_percent: livePrice ? parseFloat((((currentPrice - posData.buy_price_eur) / posData.buy_price_eur) * 100).toFixed(2)) : (posData.monthly_change_percent || 0)
       });
     }
     
+    // Attribution au tableau réactif
     positions.value = localPositions;
     
-    // 3. Écrire le montant d'investissement calculé dans le profil financier
+    // 3. MISE À JOUR CRITIQUE DE TOTAL_INVESTMENT DANS FIRESTORE
+    // On écrit directement la valeur cumulée `calculatedTotal` pour éviter les décalages de l'état réactif Vue
     await updateDoc(profileRef, {
-      total_investment: totalCalculatedInvestment.value
+      total_investment: calculatedTotal
     });
-    investment.value = totalCalculatedInvestment.value;
+    
+    // Mise à jour locale de l'état pour l'affichage de l'interface
+    investment.value = calculatedTotal;
+
+    // Reset du compte à rebours de l'auto-refresh (15 min)
+    nextAutoUpdateTime.value = 900;
 
   } catch (e) {
-    console.error("Erreur lors de la synchronisation :", e);
+    console.error("Erreur lors de la synchronisation du Dashboard et du total_investment :", e);
   } finally {
     loading.value = false;
     updatingPrices.value = false;
   }
 };
 
+// --- LOGIQUE DE TRANSACTIONS (ACHAT / VENTE) ---
+const openEditModal = (pos) => {
+  selectedPosition.value = pos;
+  transactionAmountEur.value = 0;
+  showEditModal.value = true;
+};
+
+const handleTransaction = async (type) => {
+  const user = auth.currentUser;
+  const pos = selectedPosition.value;
+  if (!user || !pos || transactionAmountEur.value <= 0) return;
+
+  try {
+    const marketPrice = await fetchLivePrice(pos.ticker) || pos.current_price_eur;
+    const quantityGap = transactionAmountEur.value / marketPrice;
+    
+    let updatedQuantity = pos.quantity;
+    let updatedInvestedAmount = pos.invested_amount_eur || pos.total_value_eur;
+
+    if (type === 'buy') {
+      updatedQuantity += quantityGap;
+      updatedInvestedAmount += transactionAmountEur.value;
+    } else if (type === 'sell') {
+      updatedQuantity -= quantityGap;
+      updatedInvestedAmount -= transactionAmountEur.value;
+    }
+
+    const posDocRef = doc(db, "user_investment_positions", pos.id);
+
+    if (updatedQuantity <= 0.0001) {
+      await deleteDoc(posDocRef);
+    } else {
+      await updateDoc(posDocRef, {
+        quantity: updatedQuantity,
+        invested_amount_eur: updatedInvestedAmount,
+        total_value_eur: updatedQuantity * marketPrice
+      });
+    }
+
+    showEditModal.value = false;
+    
+    // On relance loadDashboardData qui va tout recalculer et écraser l'ancien total_investment dans Firestore !
+    await loadDashboardData(user, true);
+    
+    alert(type === 'buy' ? "Achat pris en compte ! Capital complété." : "Vente enregistrée avec succès !");
+  } catch (e) {
+    console.error("Erreur lors de la modification de la position :", e);
+  }
+};
+
+// --- TIMERS DE RAFRAÎCHISSEMENT COHÉRENTS ---
 onMounted(() => {
   auth.onAuthStateChanged((user) => {
     if (user) {
       loadDashboardData(user);
+
+      // Compte à rebours visuel
+      setInterval(() => {
+        if (nextAutoUpdateTime.value > 0) nextAutoUpdateTime.value--;
+      }, 1000);
+
+      // Auto-refresh toutes les 15 minutes
+      refreshIntervalInstance.value = setInterval(() => {
+        loadDashboardData(user, true);
+      }, 15 * 60 * 1000);
     }
   });
 });
 
-// Déclencheur manuel pour le bouton "Mettre à jour"
+onUnmounted(() => {
+  if (refreshIntervalInstance.value) clearInterval(refreshIntervalInstance.value);
+});
+
 const triggerManualUpdate = () => {
   const user = auth.currentUser;
   if (user) loadDashboardData(user, true);
 };
 
-// --- AJOUTER UN ACTIF EN ENTRANT DES EUROS ---
+// --- AJOUTER UN NOUVEL ACTIF EN ENTRANT DES EUROS ---
 const handleAddAsset = async () => {
   const user = auth.currentUser;
   if (!user || !newAsset.value.ticker || newAsset.value.invested_amount_eur <= 0) return;
 
   try {
-    // 1. On va chercher le prix actuel sur le marché (ex: 60 000€ pour le BTC)
     const marketPrice = await fetchLivePrice(newAsset.value.ticker);
     if (!marketPrice) {
       alert("Impossible de récupérer le prix de cet actif. Vérifiez le ticker.");
       return;
     }
 
-    // 2. FORMULE MAGIQUE : Quantité achetée = Euros investis / Prix unitaire de l'actif
     const calculatedQuantity = newAsset.value.invested_amount_eur / marketPrice;
 
     const positionsRef = collection(db, "user_investment_positions");
@@ -147,16 +230,18 @@ const handleAddAsset = async () => {
       name: newAsset.value.name,
       ticker: newAsset.value.ticker.toUpperCase().trim(),
       category: newAsset.value.category,
-      quantity: calculatedQuantity,                          // Stocké en fraction de jeton exacte
-      buy_price_eur: marketPrice,                            // Son prix d'achat de référence
+      quantity: calculatedQuantity,                          
+      buy_price_eur: marketPrice,                            
       current_price_eur: marketPrice,
-      invested_amount_eur: Number(newAsset.value.invested_amount_eur), // Tes euros saisis
+      invested_amount_eur: Number(newAsset.value.invested_amount_eur), 
       total_value_eur: Number(newAsset.value.invested_amount_eur),
       monthly_change_percent: 0
     });
 
     showForm.value = false;
     newAsset.value = { name: '', ticker: '', category: 'Crypto', invested_amount_eur: 0 };
+    
+    // Le chargement ici va automatiquement additionner ce nouvel actif et mettre à jour Firebase
     await loadDashboardData(user);
     
     alert("Actif ajouté ! Quantité calculée automatiquement par rapport au marché.");
@@ -165,7 +250,7 @@ const handleAddAsset = async () => {
   }
 };
 
-// --- COMPUTED POUR CALCULS DES RATIOS ---
+// --- COMPUTED UTILES ---
 const totalCalculatedInvestment = computed(() => {
   return positions.value.reduce((sum, pos) => sum + pos.total_value_eur, 0);
 });
@@ -174,14 +259,13 @@ const totalInvestedCapital = computed(() => {
   return positions.value.reduce((sum, pos) => sum + (pos.invested_amount_eur || pos.total_value_eur), 0);
 });
 
-// Rendement global calculé sur le portefeuille
 const portfolioYield = computed(() => {
   if (totalInvestedCapital.value === 0) return 0;
   const gain = totalCalculatedInvestment.value - totalInvestedCapital.value;
   return parseFloat(((gain / totalInvestedCapital.value) * 100).toFixed(2));
 });
 
-const globalNetWorth = computed(() => savings.value + totalCalculatedInvestment.value);
+const globalNetWorth = computed(() => savings.value + investment.value);
 
 const savingsPercentage = computed(() => {
   if (globalNetWorth.value === 0) return 0;
@@ -190,7 +274,7 @@ const savingsPercentage = computed(() => {
 
 const investmentPercentage = computed(() => {
   if (globalNetWorth.value === 0) return 0;
-  return Math.round((totalCalculatedInvestment.value / globalNetWorth.value) * 100);
+  return Math.round((investment.value / globalNetWorth.value) * 100);
 });
 
 const filteredPositions = computed(() => {
@@ -206,7 +290,6 @@ const categoryTotals = computed(() => {
   return totals;
 });
 </script>
-
 <template>
   <div class="max-w-7xl mx-auto w-full px-4 py-6 font-['Inter'] space-y-6">
     
@@ -239,14 +322,20 @@ const categoryTotals = computed(() => {
     </div>
 
     <div class="flex justify-between items-center">
-      <button 
-        @click="triggerManualUpdate" 
-        :disabled="updatingPrices"
-        class="bg-gray-100 hover:bg-gray-200 border text-gray-700 font-bold py-2 px-3.5 rounded-xl text-xs flex items-center gap-2 transition-all disabled:opacity-50"
-      >
-        <span :class="{ 'animate-spin': updatingPrices }">🔄</span>
-        {{ updatingPrices ? 'Mise à jour en cours...' : 'Mettre à jour les cours' }}
-      </button>
+      <div class="flex items-center gap-3">
+        <button 
+          @click="triggerManualUpdate" 
+          :disabled="updatingPrices"
+          class="bg-gray-100 hover:bg-gray-200 border text-gray-700 font-bold py-2 px-3.5 rounded-xl text-xs flex items-center gap-2 transition-all disabled:opacity-50"
+        >
+          <span :class="{ 'animate-spin': updatingPrices }">🔄</span>
+          {{ updatingPrices ? 'Synchronisation...' : 'Mettre à jour les cours' }}
+        </button>
+
+        <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest bg-gray-50 border border-gray-100 px-2.5 py-1.5 rounded-lg">
+          ⏱️ Actu dans {{ Math.floor(nextAutoUpdateTime / 60) }}m {{ nextAutoUpdateTime % 60 }}s
+        </span>
+      </div>
 
       <button @click="showForm = !showForm" class="bg-[#5B51F4] hover:bg-[#473EE0] text-white font-bold py-2 px-4 rounded-xl text-xs shadow-sm transition-all">
         {{ showForm ? '✖ Fermer' : '➕ Ajouter un investissement' }}
@@ -328,11 +417,20 @@ const categoryTotals = computed(() => {
                   <span class="text-[9px] text-gray-400 font-bold uppercase">Achat: {{ Math.round(pos.buy_price_eur).toLocaleString() }}€ • Qté: {{ pos.quantity.toFixed(4) }}</span>
                 </div>
               </div>
-              <div class="text-right">
-                <p class="text-xs font-black text-gray-900">{{ Math.round(pos.total_value_eur).toLocaleString() }} €</p>
-                <span class="text-[9px] font-bold" :class="pos.monthly_change_percent >= 0 ? 'text-emerald-500' : 'text-rose-500'">
-                  {{ pos.monthly_change_percent >= 0 ? '▲ +' : '▼ ' }}{{ pos.monthly_change_percent }}%
-                </span>
+              <div class="flex items-center gap-4">
+                <div class="text-right">
+                  <p class="text-xs font-black text-gray-900">{{ Math.round(pos.total_value_eur).toLocaleString() }} €</p>
+                  <span class="text-[9px] font-bold" :class="pos.monthly_change_percent >= 0 ? 'text-emerald-500' : 'text-rose-500'">
+                    {{ pos.monthly_change_percent >= 0 ? '▲ +' : '▼ ' }}{{ pos.monthly_change_percent }}%
+                  </span>
+                </div>
+                <button 
+                  @click="openEditModal(pos)" 
+                  class="bg-gray-100 hover:bg-gray-200 text-gray-600 p-2 rounded-xl text-xs transition-colors"
+                  title="Modifier les fonds (Achat / Vente)"
+                >
+                  ⚙️
+                </button>
               </div>
             </div>
             <div v-if="filteredPositions.length === 0" class="text-center py-6 text-xs text-gray-400 font-medium">
@@ -381,10 +479,40 @@ const categoryTotals = computed(() => {
       </div>
 
     </div>
+
+    <div v-if="showEditModal" class="fixed inset-0 bg-black/40 backdrop-blur-xs z-[100] flex items-center justify-center p-4">
+      <div class="bg-white rounded-[24px] p-6 max-w-sm w-full border border-gray-100 shadow-xl space-y-5 animate-fade-in">
+        <div class="text-center">
+          <h3 class="text-sm font-black text-gray-900 uppercase tracking-wide">Ajuster votre position</h3>
+          <p class="text-xs text-[#5B51F4] font-black mt-1 uppercase">{{ selectedPosition?.name }} ({{ selectedPosition?.ticker }})</p>
+        </div>
+        
+        <div class="space-y-1">
+          <label class="text-[10px] font-bold text-gray-400 uppercase">Montant de la transaction (€)</label>
+          <input 
+            v-model.number="transactionAmountEur" 
+            type="number" 
+            class="w-full p-3 bg-gray-50 border rounded-xl font-black text-center text-sm outline-none focus:border-[#5B51F4]" 
+            placeholder="Ex: 250" 
+          />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <button @click="handleTransaction('sell')" class="py-3 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl font-black text-xs transition-colors border border-rose-100">
+            📉 RETIRER / VENDRE
+          </button>
+          <button @click="handleTransaction('buy')" class="py-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 rounded-xl font-black text-xs transition-colors border border-emerald-100">
+            📈 COMPLÉTER / ACHETER
+          </button>
+        </div>
+        
+        <div class="text-center pt-1">
+          <button @click="showEditModal = false" class="text-[10px] font-black uppercase text-gray-400 hover:text-gray-600 tracking-wider">
+            Annuler l'opération
+          </button>
+        </div>
+      </div>
+    </div>
+
   </div>
 </template>
-
-<style scoped>
-.animate-fade-in { animation: fadeIn 0.25s ease-out; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
-</style>

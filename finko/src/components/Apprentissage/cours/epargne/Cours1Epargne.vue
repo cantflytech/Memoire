@@ -1,10 +1,27 @@
 <script setup>
 import { ref } from 'vue';
+import { db, auth } from '../../../../firebase/config'; // Ajuste le chemin selon ton projet
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { useRouter } from 'vue-router';
+import { 
+  ArrowLeft, 
+  BookOpen, 
+  Wallet, 
+  TrendingUp, 
+  TrendingDown, 
+  AlertTriangle, 
+  Sparkles, 
+  HelpCircle, 
+  CheckCircle2, 
+  XCircle 
+} from 'lucide-vue-next';
+
+const router = useRouter();
 
 // Gestion de la leçon active (1 à 6)
 const activeLesson = ref(1);
 
-// Modèle réactif pour l'exercice interactif rapide de la leçon 6
+// Modèles réactifs pour l'exercice interactif rapide de la leçon 6
 const userIncomeInput = ref(2100);
 const userFixedInput = ref(860);
 const userVariableInput = ref(600);
@@ -14,8 +31,81 @@ const userSavingsPotential = ref(640);
 const calculateUserSavings = () => {
   userSavingsPotential.value = userIncomeInput.value - userFixedInput.value - userVariableInput.value;
 };
-</script>
 
+// État de chargement Firebase lors de la clôture
+const finishingLoading = ref(false);
+
+// Fonction déclenchée à la fin de la leçon 6 (Terminer le cours)
+const handleFinishLesson = async () => {
+  const user = auth.currentUser;
+  if (!user) {
+    router.push('/education-dashboard');
+    return;
+  }
+
+  try {
+    finishingLoading.value = true;
+
+    // 1. Récupérer le profil utilisateur actuel
+    const profileRef = doc(db, "user_financial_profile", user.uid);
+    const profileSnap = await getDoc(profileRef);
+    
+    let currentXp = 0;
+    let currentLevel = 1;
+
+    if (profileSnap.exists()) {
+      const profileData = profileSnap.data().user_financial_profile || profileSnap.data();
+      currentXp = profileData.xp || 0;
+      currentLevel = profileData.level || 1;
+    }
+
+    // 2. Calculer le gain d'XP (+50 XP pour la validation de ce cours)
+    const xpGained = 50; 
+    let newXp = currentXp + xpGained;
+    let newLevel = currentLevel;
+
+    // 3. Logique de montée de niveau (Palier de 3 000 XP requis par niveau)
+    const xpPerLevel = 3000;
+    if (newXp >= xpPerLevel) {
+      newLevel += Math.floor(newXp / xpPerLevel);
+      newXp = newXp % xpPerLevel; // Conserve le reste d'XP pour le niveau suivant
+      alert(`Félicitations ! Tu passes au Niveau ${newLevel} ! 🎉`);
+    }
+
+    // 4. Enregistrer les modifications de progression dans Firestore
+    await setDoc(profileRef, {
+      user_financial_profile: {
+        xp: newXp,
+        level: newLevel
+      }
+    }, { merge: true });
+
+    alert("Cours validé ! +50 XP obtenus.");
+    
+    // 5. Redirection vers la page EducationDashboard
+    // forcer à recharger la page pour que les nouvelles données soient prises en compte sans ce faire déconnecter
+  
+    router.push('/education-dashboard');
+   
+    
+
+  } catch (error) {
+    console.error("Erreur lors de la mise à jour de l'XP :", error);
+    alert("Une erreur est survenue lors de l'enregistrement de tes points.");
+  } finally {
+    finishingLoading.value = false;
+  }
+};
+
+// Gestion centralisée du bouton d'avancement principal
+const handleNextStep = () => {
+  if (activeLesson.value < 6) {
+    activeLesson.value++;
+  } else {
+    handleFinishLesson();
+  }
+};
+</script>
 <template class="heading">
   <main class="max-w-7xl mx-auto bg-[#F8FAFB] font-['Inter'] flex justify-center">
     <div class="max-w-7xl w-full bg-white rounded-[32px] border border-gray-100 shadow-sm overflow-hidden">
@@ -222,11 +312,11 @@ const calculateUserSavings = () => {
 
       </div>
 
-      <footer class="p-6 bg-gray-50 border-t border-gray-100 flex justify-between items-center">
+   <footer class="p-6 bg-gray-50 border-t border-gray-100 flex justify-between items-center">
         <button 
           @click="activeLesson > 1 ? activeLesson-- : null"
           :disabled="activeLesson === 1"
-          class="px-4 py-2.5 rounded-xl border border-gray-200 text-xs font-bold text-gray-600 bg-white hover:bg-gray-50 disabled:opacity-40 transition-all"
+          class="px-4 py-2.5 rounded-xl border border-gray-200 text-xs font-bold text-gray-600 bg-white hover:bg-gray-50 disabled:opacity-40 transition-all cursor-pointer"
         >
           Précédent
         </button>
@@ -236,10 +326,20 @@ const calculateUserSavings = () => {
         </div>
 
         <button 
-          @click="activeLesson < 6 ? activeLesson++ : alert('Félicitations, tu as terminé ce cours !')"
-          class="px-5 py-2.5 rounded-xl bg-[#00AA90] hover:bg-[#008F7A] text-white text-xs font-black shadow-xs transition-all"
+          @click="handleNextStep"
+          :disabled="finishingLoading"
+          class="px-5 py-2.5 rounded-xl bg-[#00AA90] hover:bg-[#008F7A] text-white text-xs font-black shadow-xs transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         >
-          {{ activeLesson === 6 ? 'Terminer le cours ✓' : 'Continuer →' }}
+          <span v-if="finishingLoading" class="flex items-center gap-1">
+            <svg class="animate-spin h-3 w-3 text-white" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span>Validation...</span>
+          </span>
+          <span v-else>
+            {{ activeLesson === 6 ? 'Terminer le cours ✓' : 'Continuer →' }}
+          </span>
         </button>
       </footer>
 
