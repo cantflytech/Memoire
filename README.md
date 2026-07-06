@@ -1,8 +1,3 @@
-Carrément ! Un bon fichier `README.md` est indispensable pour présenter ton projet (surtout pour un rapport de stage ou un portfolio sur GitHub).
-
-Voici une structure complète, propre et professionnelle, rédigée en Markdown, que tu as juste à copier-coller à la racine de ton projet.
-
-```markdown
 # 🚀 Finko - Plateforme de Gestion de Finances Personnelles & d'Éducation Financière
 
 Finko est une application web moderne (Single Page Application) conçue pour aider les utilisateurs à piloter leur santé financière, suivre leurs investissements en temps réel, et développer leurs compétences économiques via un parcours d'apprentissage ludique et gamifié.
