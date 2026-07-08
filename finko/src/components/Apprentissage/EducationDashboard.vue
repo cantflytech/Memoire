@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { db, auth } from '../../firebase/config';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 
@@ -57,42 +57,54 @@ const currentSavingsTitle = computed(() => {
   return levelTitles[userLevel.value] || levelTitles[4];
 });
 
+const loadLearningProfile = async (user) => {
+  try {
+    const profileRef = doc(db, "user_financial_profile", user.uid);
+    const profileSnap = await getDoc(profileRef);
+
+    if (profileSnap.exists()) {
+      const data = profileSnap.data().user_financial_profile || profileSnap.data();
+      userXP.value = data.xp ?? 0;
+      userLevel.value = data.level ?? 1;
+      nivEpargne.value = data.Niv_epargne ?? 0;
+      nivInvest.value = data.Niv_Invest ?? 0;
+    } else {
+      await setDoc(profileRef, {
+        user_financial_profile: {
+          xp: 0,
+          level: 1,
+          Niv_epargne: 0,
+          Niv_Invest: 0
+        }
+      }, { merge: true });
+    }
+  } catch (e) {
+    console.error("Erreur lors du chargement du profil d'apprentissage :", e);
+  } finally {
+    loading.value = false;
+  }
+};
+
+const handleCourseCompleted = async () => {
+  currentView.value = 'menu';
+  const user = auth.currentUser;
+  if (user) {
+    loading.value = true;
+    await loadLearningProfile(user);
+  }
+};
+
 onMounted(() => {
   auth.onAuthStateChanged(async (user) => {
     if (user) {
-      try {
-        // CORRECTION CRITIQUE : Ciblage direct du document par l'UID (cohérent avec setDoc de tes autres pages)
-        const profileRef = doc(db, "user_financial_profile", user.uid);
-        const profileSnap = await getDoc(profileRef);
-
-        if (profileSnap.exists()) {
-          const data = profileSnap.data().user_financial_profile || profileSnap.data();
-          
-          // Lecture des clés standardisées partagées entre tes composants
-          userXP.value = data.xp ?? 0;
-          userLevel.value = data.level ?? 1;
-          
-          // Optionnel : Récupération de sous-niveaux spécifiques si tu les utilises
-          nivEpargne.value = data.Niv_epargne ?? 0;
-          nivInvest.value = data.Niv_Invest ?? 0;
-        } else {
-          // Si aucun profil financier n'existe, on initialise proprement la structure
-          await setDoc(profileRef, {
-            user_financial_profile: {
-              xp: 0,
-              level: 1,
-              Niv_epargne: 0,
-              Niv_Invest: 0
-            }
-          }, { merge: true });
-        }
-      } catch (e) {
-        console.error("Erreur lors du chargement du profil d'apprentissage :", e);
-      } finally {
-        loading.value = false;
-      }
+      await loadLearningProfile(user);
     }
   });
+  window.addEventListener('learning-course-completed', handleCourseCompleted);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('learning-course-completed', handleCourseCompleted);
 });
 </script>
 
@@ -274,7 +286,7 @@ onMounted(() => {
               >
                 <div class="flex items-center gap-3">
                   <span class="text-base text-indigo-500 group-hover:scale-110 transition-transform">🎋</span>
-                  <span class="text-xs font-bold text-gray-700 group-hover:text-[#5B51F4]">Comprendre l'effet des intérêts composés</span>
+                  <span class="text-xs font-bold text-gray-700 group-hover:text-[#5B51F4]">Épargner vs Investir</span>
                 </div>
                 <span class="text-[9px] font-black tracking-wider text-gray-500 bg-gray-100 px-2.5 py-1 rounded-md uppercase">Leçon</span>
               </div>
@@ -285,7 +297,7 @@ onMounted(() => {
               >
                 <div class="flex items-center gap-3">
                   <span class="text-base text-indigo-500 group-hover:scale-110 transition-transform">💎</span>
-                  <span class="text-xs font-bold text-gray-700 group-hover:text-[#5B51F4]">Choisir son enveloppe fiscale (PEA vs AV)</span>
+                  <span class="text-xs font-bold text-gray-700 group-hover:text-[#5B51F4]">Comprendre l'effet des intérêts composés</span>
                 </div>
                 <span class="text-[9px] font-black tracking-wider text-indigo-500 bg-indigo-50 px-2.5 py-1 rounded-md uppercase">Leçon</span>
               </div>

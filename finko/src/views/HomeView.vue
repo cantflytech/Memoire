@@ -140,10 +140,10 @@ const epargneFeatures = [
 ];
 
 const lessons = [
-  { title: "C'est quoi un Livret A ?", xp: 20, done: true, icon: PiggyBank },
-  { title: 'Comprendre la diversification', xp: 30, done: true, icon: Layers },
-  { title: 'Simuler son investissement', xp: 50, done: false, icon: LineChart, active: true },
-  { title: 'Stratégie ETF pour débutants', xp: 40, done: false, icon: TrendingUp },
+  { title: 'Comprendre son budget', xp: 50, done: true, icon: PiggyBank },
+  { title: "Créer son fonds de précaution", xp: 50, done: true, icon: Layers },
+  { title: 'Épargner vs Investir', xp: 50, done: false, icon: LineChart, active: true },
+  { title: "Comprendre l'effet des intérêts composés", xp: 50, done: false, icon: TrendingUp },
 ];
 
 const apprentissageFeatures = [

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { db, auth } from '../../firebase/config';
 import { doc, getDoc, collection, query, where, getDocs, updateDoc, deleteDoc, addDoc, orderBy, limit, serverTimestamp } from 'firebase/firestore';
 import { 
@@ -18,20 +18,42 @@ const transactionAmountEur = ref(0);
 
 const positions = ref([]);
 const recentActivities = ref([]); 
+const currentUser = ref(null);
+
+const broadcastPortfolioUpdate = () => {
+  window.dispatchEvent(new CustomEvent('investment-updated'));
+};
+
+const refreshFromExternalUpdate = () => {
+  if (currentUser.value) loadDashboardData(currentUser.value);
+};
 
 const fetchLivePrice = async (ticker) => {
   try {
+    if (!ticker) return null;
     const cleanTicker = ticker.toLowerCase().trim();
     if (cleanTicker === 'btc') {
       const res = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCEUR');
       const data = await res.json();
       return parseFloat(data.price);
     } else if (cleanTicker === 'eth') {
-      const res = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=ETCEUR');
+      const res = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=ETHEUR');
+      const data = await res.json();
+      return parseFloat(data.price);
+    } else if (cleanTicker === 'sol') {
+      const res = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=SOLEUR');
+      const data = await res.json();
+      return parseFloat(data.price);
+    } else if (cleanTicker === 'bnb') {
+      const res = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=BNBEUR');
+      const data = await res.json();
+      return parseFloat(data.price);
+    } else if (cleanTicker === 'xrp') {
+      const res = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=XRPEUR');
       const data = await res.json();
       return parseFloat(data.price);
     }
-    return Math.floor(Math.random() * (250 - 50 + 1)) + 50;
+    return null;
   } catch (error) {
     console.error("Erreur d'appel API prix pour " + ticker, error);
     return null; 
@@ -51,7 +73,9 @@ const loadDashboardData = async (user) => {
     
     for (const document of querySnapshot.docs) {
       const posData = document.data();
-      const livePrice = await fetchLivePrice(posData.ticker);
+      const livePrice = ['Immobilier', 'ETF'].includes(posData.category)
+        ? null
+        : await fetchLivePrice(posData.ticker);
       
       let currentPrice = posData.current_price_eur || posData.buy_price_eur;
       let totalValueAsset = posData.quantity * currentPrice;
@@ -122,14 +146,17 @@ const fetchRecentActivities = async (userId) => {
         ...doc.data()
       }));
       
-      // Tri manuel par date pour contourner le manque d'index de Firebase au démarrage
+      // Affiche les ordres passes (achat / vente) et les ajouts initiaux, puis garde les 5 plus recents.
       recentActivities.value = allActs
+        .filter((act) => act.type === 'buy' || act.type === 'sell' || act.type === 'initial')
         .sort((a, b) => {
           const tA = a.timestamp?.seconds || 0;
           const tB = b.timestamp?.seconds || 0;
           return tB - tA;
         })
         .slice(0, 5);
+    } else {
+      recentActivities.value = [];
     }
   } catch (e) {
     console.error("Erreur lors de la récupération des activités :", e);
@@ -170,6 +197,7 @@ const handleTransaction = async (type) => {
 
     showEditModal.value = false;
     await loadDashboardData(user);
+    broadcastPortfolioUpdate();
   } catch (e) {
     console.error("Erreur lors de la modification de la position :", e);
   }
@@ -186,7 +214,7 @@ const totalCalculatedInvestment = computed(() => {
 });
 
 const categoryTotals = computed(() => {
-  const totals = { Crypto: 0, Obligation: 0, Immobilier: 0 };
+  const totals = { Crypto: 0, ETF: 0, Obligation: 0, Immobilier: 0 };
   positions.value.forEach(p => {
     if (totals[p.category] !== undefined) totals[p.category] += p.total_value_eur;
   });
@@ -198,13 +226,14 @@ const diversificationScore = computed(() => {
   if (total === 0) return 0;
 
   const cryptoWeight = (categoryTotals.value.Crypto || 0) / total;
+  const etfWeight = (categoryTotals.value.ETF || 0) / total;
   const obligationWeight = (categoryTotals.value.Obligation || 0) / total;
   const immoWeight = (categoryTotals.value.Immobilier || 0) / total;
 
-  const hhi = Math.pow(cryptoWeight, 2) + Math.pow(obligationWeight, 2) + Math.pow(immoWeight, 2);
+  const hhi = Math.pow(cryptoWeight, 2) + Math.pow(etfWeight, 2) + Math.pow(obligationWeight, 2) + Math.pow(immoWeight, 2);
   
   const maxHhi = 1;
-  const minHhi = 1 / 3; 
+  const minHhi = 1 / 4; 
   
   const score = ((maxHhi - hhi) / (maxHhi - minHhi)) * 100;
   return Math.min(Math.max(Math.round(score), 0), 100);
@@ -218,9 +247,15 @@ const filteredPositions = computed(() => {
 onMounted(() => {
   auth.onAuthStateChanged((user) => {
     if (user) {
+      currentUser.value = user;
       loadDashboardData(user);
     }
   });
+  window.addEventListener('investment-updated', refreshFromExternalUpdate);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('investment-updated', refreshFromExternalUpdate);
 });
 </script>
 
@@ -242,7 +277,7 @@ onMounted(() => {
             </h3>
             
             <div class="flex bg-gray-100/80 p-1 rounded-xl text-xs font-black text-gray-700">
-              <button v-for="tab in ['Tous', 'Crypto', 'Obligation', 'Immobilier']" :key="tab"
+              <button v-for="tab in ['Tous', 'Crypto', 'ETF', 'Obligation', 'Immobilier']" :key="tab"
                 @click="activeTab = tab"
                 :class="activeTab === tab ? 'bg-[#5B51F4] text-white shadow-sm' : 'hover:text-gray-900'"
                 class="px-4 py-1.5 rounded-lg transition-all font-black cursor-pointer"
@@ -318,7 +353,7 @@ onMounted(() => {
                   <span class="text-[9px] font-semibold uppercase text-gray-400 tracking-wider">{{ act.type === 'initial' ? 'Ajout' : act.type === 'buy' ? 'Achat' : 'Vente' }}</span>
                 </div>
               </div>
-              <span class="text-xs font-black text-gray-900">{{ act.amount.toLocaleString() }} €</span>
+              <span class="text-xs font-black text-gray-900">{{ Number(act.amount || 0).toLocaleString() }} €</span>
             </div>
           </div>
 

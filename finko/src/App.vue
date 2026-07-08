@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue'
 import { RouterLink, RouterView, useRoute } from 'vue-router'
 import { useAuth } from './composables/useAuth' // Ajuste le chemin si besoin
+import LegalFooter from './components/LegalFooter.vue'
 import { Menu, X, Shield, TrendingUp, BookOpen, LogOut, LogIn } from 'lucide-vue-next'
 
 const { user, logout } = useAuth()
@@ -167,6 +168,8 @@ const capsuleBorderColor = computed(() => {
   <main class="bg-[#F8FAFC] min-h-[calc(100vh-4rem)]">
     <RouterView />
   </main>
+
+  <LegalFooter />
 </template>
 
 <style scoped>

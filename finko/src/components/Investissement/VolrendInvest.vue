@@ -1,7 +1,8 @@
 <script setup>
-import { ref, onMounted, onUnmounted, computed } from 'vue';
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import { db, auth } from '../../firebase/config';
-import { doc, getDoc, collection, query, where, getDocs, addDoc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { doc, getDoc, collection, query, where, getDocs, addDoc, updateDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -17,6 +18,8 @@ import {
 const loading = ref(true);
 const updatingPrices = ref(false); 
 const activeTab = ref('Tous');
+const currentUser = ref(null);
+const router = useRouter();
 
 // Auto-Refresh (15 minutes)
 const refreshIntervalInstance = ref(null);
@@ -41,21 +44,91 @@ const newAsset = ref({
   invested_amount_eur: 0 
 });
 
+const selectedPresetTicker = ref('');
+const presetAssets = {
+  Crypto: [
+    { name: 'Bitcoin', ticker: 'BTC' },
+    { name: 'Ethereum', ticker: 'ETH' },
+    { name: 'Solana', ticker: 'SOL' },
+    { name: 'BNB', ticker: 'BNB' },
+    { name: 'XRP', ticker: 'XRP' }
+  ],
+  ETF: [
+    { name: 'Amundi MSCI World (CW8)', ticker: 'CW8' },
+    { name: 'Amundi MSCI World UCITS ETF (EWLD)', ticker: 'EWLD' },
+    { name: 'iShares Core S&P 500 UCITS ETF (CSPX)', ticker: 'CSPX' },
+    { name: 'Lyxor PEA Nasdaq-100 UCITS ETF (PUST)', ticker: 'PUST' },
+    { name: 'Vanguard FTSE All-World UCITS ETF (VWCE)', ticker: 'VWCE' }
+  ]
+};
+
+const isNonMarketPricedCategory = computed(() => {
+  return ['Immobilier', 'ETF'].includes(newAsset.value.category);
+});
+
+const shouldShowPresets = computed(() => {
+  return ['Crypto', 'ETF'].includes(newAsset.value.category);
+});
+
+const currentPresetOptions = computed(() => {
+  return presetAssets[newAsset.value.category] || [];
+});
+
+const broadcastPortfolioUpdate = () => {
+  window.dispatchEvent(new CustomEvent('investment-updated'));
+};
+
+const openPortfolioSimulation = () => {
+  router.push({ name: 'portfolio-simulation' });
+};
+
+const refreshFromExternalUpdate = () => {
+  if (currentUser.value) loadDashboardData(currentUser.value);
+};
+
+const logActivity = async (userId, type, assetName, ticker, amount) => {
+  try {
+    const activityRef = collection(db, 'user_financial_profile', userId, 'activities');
+    await addDoc(activityRef, {
+      type,
+      assetName,
+      ticker: (ticker || 'N/A').toUpperCase(),
+      amount: Number(amount),
+      timestamp: serverTimestamp()
+    });
+  } catch (e) {
+    console.error("Erreur lors du log de l'activité :", e);
+  }
+};
+
 // --- API LIVE PRICES (BINANCE) ---
 const fetchLivePrice = async (ticker) => {
   try {
+    if (!ticker) return null;
     const cleanTicker = ticker.toLowerCase().trim();
     if (cleanTicker === 'btc') {
       const res = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCEUR');
       const data = await res.json();
       return parseFloat(data.price);
     } else if (cleanTicker === 'eth') {
-      const res = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=ETCEUR');
+      const res = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=ETHEUR');
+      const data = await res.json();
+      return parseFloat(data.price);
+    } else if (cleanTicker === 'sol') {
+      const res = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=SOLEUR');
+      const data = await res.json();
+      return parseFloat(data.price);
+    } else if (cleanTicker === 'bnb') {
+      const res = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=BNBEUR');
+      const data = await res.json();
+      return parseFloat(data.price);
+    } else if (cleanTicker === 'xrp') {
+      const res = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=XRPEUR');
       const data = await res.json();
       return parseFloat(data.price);
     }
-    // Simulation réaliste pour les tickers inconnus hors API
-    return Math.floor(Math.random() * (250 - 50 + 1)) + 50;
+    // On refuse les tickers inconnus pour éviter les montants incohérents.
+    return null;
   } catch (error) {
     console.error("Erreur d'appel API prix pour " + ticker, error);
     return null; 
@@ -86,7 +159,9 @@ const loadDashboardData = async (user, forceRefresh = false) => {
     
     for (const document of querySnapshot.docs) {
       const posData = document.data();
-      const livePrice = await fetchLivePrice(posData.ticker);
+      const livePrice = ['Immobilier', 'ETF'].includes(posData.category)
+        ? null
+        : await fetchLivePrice(posData.ticker);
       
       let currentPrice = posData.current_price_eur || posData.buy_price_eur;
       let totalValueAsset = posData.quantity * currentPrice;
@@ -132,22 +207,33 @@ const loadDashboardData = async (user, forceRefresh = false) => {
 
 const handleAddAsset = async () => {
   const user = auth.currentUser;
-  if (!user || !newAsset.value.ticker || newAsset.value.invested_amount_eur <= 0) return;
+  if (!user || !newAsset.value.name || newAsset.value.invested_amount_eur <= 0) return;
+  if (!isNonMarketPricedCategory.value && !newAsset.value.ticker) return;
 
   try {
-    const marketPrice = await fetchLivePrice(newAsset.value.ticker);
-    if (!marketPrice) {
-      alert("Impossible de récupérer le prix du marché.");
-      return;
+    const isStaticPriced = isNonMarketPricedCategory.value;
+    const normalizedTicker = isStaticPriced
+      ? (newAsset.value.category === 'Immobilier' ? 'IMMO' : newAsset.value.ticker.toUpperCase().trim())
+      : newAsset.value.ticker.toUpperCase().trim();
+
+    let marketPrice = Number(newAsset.value.invested_amount_eur);
+    let calculatedQuantity = 1;
+
+    if (!isStaticPriced) {
+      marketPrice = await fetchLivePrice(newAsset.value.ticker);
+      if (!marketPrice) {
+        alert("Impossible de récupérer le prix du marché.");
+        return;
+      }
+      calculatedQuantity = newAsset.value.invested_amount_eur / marketPrice;
     }
 
-    const calculatedQuantity = newAsset.value.invested_amount_eur / marketPrice;
     const positionsRef = collection(db, "user_investment_positions");
     
     await addDoc(positionsRef, {
       userId: user.uid,
       name: newAsset.value.name,
-      ticker: newAsset.value.ticker.toUpperCase().trim(),
+      ticker: normalizedTicker,
       category: newAsset.value.category,
       quantity: calculatedQuantity,                          
       buy_price_eur: marketPrice,                            
@@ -157,9 +243,13 @@ const handleAddAsset = async () => {
       monthly_change_percent: 0
     });
 
+    await logActivity(user.uid, 'initial', newAsset.value.name, normalizedTicker, newAsset.value.invested_amount_eur);
+
     showForm.value = false;
     newAsset.value = { name: '', ticker: '', category: 'Crypto', invested_amount_eur: 0 };
+    selectedPresetTicker.value = '';
     await loadDashboardData(user);
+    broadcastPortfolioUpdate();
     alert("Placement enregistré avec succès !");
   } catch (e) {
     console.error("Erreur d'ajout de l'actif :", e);
@@ -205,17 +295,68 @@ const portfolioVolatility = computed(() => {
 });
 
 const categoryTotals = computed(() => {
-  const totals = { Crypto: 0, Obligation: 0, Immobilier: 0 };
+  const totals = { Crypto: 0, ETF: 0, Obligation: 0, Immobilier: 0 };
   positions.value.forEach(p => {
     if (totals[p.category] !== undefined) totals[p.category] += p.total_value_eur;
   });
   return totals;
 });
 
+const allocationRingStyle = computed(() => {
+  const total = totalCalculatedInvestment.value;
+  if (total <= 0) {
+    return {
+      background: 'conic-gradient(#E5E7EB 0deg 360deg)'
+    };
+  }
+
+  const cryptoPct = (categoryTotals.value.Crypto / total) * 360;
+  const etfPct = (categoryTotals.value.ETF / total) * 360;
+  const obligationPct = (categoryTotals.value.Obligation / total) * 360;
+  const immoPct = (categoryTotals.value.Immobilier / total) * 360;
+
+  const cryptoEnd = cryptoPct;
+  const etfEnd = cryptoEnd + etfPct;
+  const obligationEnd = etfEnd + obligationPct;
+  const immoEnd = obligationEnd + immoPct;
+
+  return {
+    background: `conic-gradient(
+      #6366F1 0deg ${cryptoEnd}deg,
+      #F59E0B ${cryptoEnd}deg ${etfEnd}deg,
+      #00AA90 ${etfEnd}deg ${obligationEnd}deg,
+      #F43F5E ${obligationEnd}deg ${immoEnd}deg,
+      #E5E7EB ${immoEnd}deg 360deg
+    )`
+  };
+});
+
+const applyPresetAsset = () => {
+  const selected = currentPresetOptions.value.find((item) => item.ticker === selectedPresetTicker.value);
+  if (!selected) return;
+  newAsset.value.name = selected.name;
+  newAsset.value.ticker = selected.ticker;
+};
+
+watch(
+  () => newAsset.value.category,
+  (category) => {
+    selectedPresetTicker.value = '';
+    if (category === 'Immobilier') {
+      newAsset.value.ticker = 'IMMO';
+      if (!newAsset.value.name) newAsset.value.name = 'Immobilier';
+      return;
+    }
+    if (newAsset.value.ticker === 'IMMO') newAsset.value.ticker = '';
+    if (newAsset.value.name === 'Immobilier') newAsset.value.name = '';
+  }
+);
+
 // --- TIMERS ---
 onMounted(() => {
   auth.onAuthStateChanged((user) => {
     if (user) {
+      currentUser.value = user;
       loadDashboardData(user);
       setInterval(() => {
         if (nextAutoUpdateTime.value > 0) nextAutoUpdateTime.value--;
@@ -225,10 +366,12 @@ onMounted(() => {
       }, 15 * 60 * 1000);
     }
   });
+  window.addEventListener('investment-updated', refreshFromExternalUpdate);
 });
 
 onUnmounted(() => {
   if (refreshIntervalInstance.value) clearInterval(refreshIntervalInstance.value);
+  window.removeEventListener('investment-updated', refreshFromExternalUpdate);
 });
 </script>
 
@@ -296,7 +439,7 @@ onUnmounted(() => {
               <h4 class="text-sm font-black text-amber-900 uppercase tracking-wide">Créer une simulation de portefeuille</h4>
               <p class="text-xs text-amber-800/80 font-medium mt-0.5">Testez des allocations théoriques sans impacter votre capital.</p>
             </div>
-            <button class="bg-[#F49F12] hover:bg-[#d98504] text-white font-black py-2.5 px-4 rounded-xl text-xs transition-all shadow-[0px_4px_0px_#C67E0A] active:translate-y-[2px] active:shadow-[0px_2px_0px_#C67E0A] cursor-pointer">
+            <button @click="openPortfolioSimulation" class="bg-[#F49F12] hover:bg-[#d98504] text-white font-black py-2.5 px-4 rounded-xl text-xs transition-all shadow-[0px_4px_0px_#C67E0A] active:translate-y-[2px] active:shadow-[0px_2px_0px_#C67E0A] cursor-pointer">
               🚀 Activer le Boost
             </button>
           </div>
@@ -314,12 +457,14 @@ onUnmounted(() => {
           </h3>
           
           <div class="flex justify-center relative py-4">
-            <div class="w-44 h-44 rounded-full border-[16px] border-t-amber-500 border-r-rose-500 border-b-[#00AA90] border-l-indigo-500 flex items-center justify-center relative">
-              <div class="text-center flex flex-col">
+            <div class="w-44 h-44 rounded-full relative" :style="allocationRingStyle">
+              <div class="absolute inset-[16px] bg-white rounded-full flex items-center justify-center">
+                <div class="text-center flex flex-col">
                 <span class="text-2xl font-black text-gray-900 tracking-tighter">
                   {{ totalCalculatedInvestment >= 1000 ? Math.round(totalCalculatedInvestment / 1000) + ' K' : Math.round(totalCalculatedInvestment) + ' €' }}
                 </span>
                 <span class="text-[9px] text-gray-400 font-black uppercase tracking-wider">Valorisation</span>
+                </div>
               </div>
             </div>
           </div>
@@ -340,6 +485,14 @@ onUnmounted(() => {
               <span class="text-gray-700 font-bold">Obligations & Livrets</span>
             </div>
             <span class="text-gray-900 font-black">{{ Math.round(categoryTotals.Obligation).toLocaleString() }} €</span>
+          </div>
+
+          <div class="flex justify-between items-center">
+            <div class="flex items-center gap-3">
+              <div class="w-3 h-3 rounded-full bg-amber-500"></div>
+              <span class="text-gray-700 font-bold">ETF</span>
+            </div>
+            <span class="text-gray-900 font-black">{{ Math.round(categoryTotals.ETF).toLocaleString() }} €</span>
           </div>
 
           <div class="flex justify-between items-center">
@@ -379,7 +532,13 @@ onUnmounted(() => {
             </div>
             <div>
               <label class="block text-[10px] font-black text-gray-400 uppercase tracking-wider mb-1">Ticker de marché</label>
-              <input v-model="newAsset.ticker" type="text" placeholder="Ex: BTC" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl font-bold text-xs text-gray-800 outline-none focus:bg-white focus:border-[#6366F1]" />
+              <input
+                v-model="newAsset.ticker"
+                type="text"
+                :disabled="newAsset.category === 'Immobilier'"
+                :placeholder="newAsset.category === 'Immobilier' ? 'Non requis pour l\'immobilier' : 'Ex: BTC'"
+                class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl font-bold text-xs text-gray-800 outline-none focus:bg-white focus:border-[#6366F1] disabled:bg-gray-100 disabled:text-gray-400"
+              />
             </div>
           </div>
 
@@ -387,10 +546,29 @@ onUnmounted(() => {
             <label class="block text-[10px] font-black text-gray-400 uppercase tracking-wider mb-1">Catégorie d'allocation</label>
             <select v-model="newAsset.category" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl font-bold text-xs text-gray-800 outline-none bg-white focus:border-[#6366F1]">
               <option value="Crypto">Crypto</option>
+              <option value="ETF">ETF</option>
               <option value="Obligation">Obligation</option>
               <option value="Immobilier">Immobilier</option>
             </select>
           </div>
+
+          <div v-if="shouldShowPresets">
+            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-wider mb-1">Liste préconstruite {{ newAsset.category }}</label>
+            <select
+              v-model="selectedPresetTicker"
+              @change="applyPresetAsset"
+              class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl font-bold text-xs text-gray-800 outline-none bg-white focus:border-[#6366F1]"
+            >
+              <option value="">Sélectionner un actif</option>
+              <option v-for="asset in currentPresetOptions" :key="asset.ticker" :value="asset.ticker">
+                {{ asset.name }} - {{ asset.ticker }}
+              </option>
+            </select>
+          </div>
+
+          <p v-if="isNonMarketPricedCategory" class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
+            {{ newAsset.category === 'Immobilier' ? "Immobilier : aucun ticker requis." : "ETF : valorisé sur le montant saisi à l'ajout." }}
+          </p>
 
           <div>
             <label class="block text-[10px] font-black text-gray-400 uppercase tracking-wider mb-1">Montant placé en Euros (€)</label>

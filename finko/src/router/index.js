@@ -21,6 +21,11 @@ const router = createRouter({
       component: () => import('../views/AboutView.vue'),
     },
     {
+      path: '/legal',
+      name: 'legal',
+      component: () => import('../views/LegalView.vue'),
+    },
+    {
       path: '/dashboard-Investissement',
       name: 'dashboard-Investissement',
       component: () => import('../views/DashboardInvestissement.vue'),
@@ -78,6 +83,12 @@ const router = createRouter({
       path:'/objectif-vie-epargne',
       name: 'objectif-vie-epargne',
       component: () => import('../components/epargne/souspages/ObjectifvieEpargne.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/simulation-portefeuille',
+      name: 'portfolio-simulation',
+      component: () => import('../views/PortfolioSimulationView.vue'),
       meta: { requiresAuth: true }
     }
   ],

@@ -39,7 +39,7 @@ const finishingLoading = ref(false);
 const handleFinishLesson = async () => {
   const user = auth.currentUser;
   if (!user) {
-    router.push('/education-dashboard');
+    router.push('/learning');
     return;
   }
 
@@ -81,11 +81,7 @@ const handleFinishLesson = async () => {
     }, { merge: true });
 
     alert("Cours validé ! +50 XP obtenus.");
-    
-    // 5. Redirection vers la page EducationDashboard
-    // forcer à recharger la page pour que les nouvelles données soient prises en compte sans ce faire déconnecter
-  
-    router.push('/education-dashboard');
+    window.dispatchEvent(new CustomEvent('learning-course-completed'));
    
     
 

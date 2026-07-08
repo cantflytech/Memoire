@@ -1,5 +1,10 @@
 <script setup>
 import { ref, computed } from 'vue';
+import { db, auth } from '../../../../firebase/config';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 // Gestion de la leçon active (1 à 5)
 const activeLesson = ref(1);
@@ -17,6 +22,58 @@ const profileStatus = computed(() => {
   if (savingsPercent.value <= 20) return { label: '🔥 Nuits Agitées (Agressif)', color: 'text-red-500', desc: 'Votre potentiel est maximal, mais attention à la moindre tempête !' };
   return { label: '⚖️ Équilibre Stratégique', color: 'text-indigo-600', desc: 'Une partie vous protège (le toit), une partie vous enrichit (l\'arbre).' };
 });
+
+const finishingLoading = ref(false);
+
+const handleFinishLesson = async () => {
+  const user = auth.currentUser;
+  if (!user) {
+    router.push('/learning');
+    return;
+  }
+
+  try {
+    finishingLoading.value = true;
+
+    const profileRef = doc(db, 'user_financial_profile', user.uid);
+    const profileSnap = await getDoc(profileRef);
+
+    let currentXp = 0;
+    let currentLevel = 1;
+
+    if (profileSnap.exists()) {
+      const profileData = profileSnap.data().user_financial_profile || profileSnap.data();
+      currentXp = profileData.xp || 0;
+      currentLevel = profileData.level || 1;
+    }
+
+    const xpGained = 50;
+    let newXp = currentXp + xpGained;
+    let newLevel = currentLevel;
+
+    const xpPerLevel = 3000;
+    if (newXp >= xpPerLevel) {
+      newLevel += Math.floor(newXp / xpPerLevel);
+      newXp = newXp % xpPerLevel;
+      alert(`Félicitations ! Tu passes au Niveau ${newLevel} ! 🎉`);
+    }
+
+    await setDoc(profileRef, {
+      user_financial_profile: {
+        xp: newXp,
+        level: newLevel
+      }
+    }, { merge: true });
+
+    alert('Cours validé ! +50 XP obtenus.');
+    window.dispatchEvent(new CustomEvent('learning-course-completed'));
+  } catch (error) {
+    console.error("Erreur lors de la mise à jour de l'XP :", error);
+    alert('Une erreur est survenue lors de la validation du cours.');
+  } finally {
+    finishingLoading.value = false;
+  }
+};
 </script>
 
 <template>
@@ -231,10 +288,11 @@ const profileStatus = computed(() => {
         <span class="text-[10px] text-gray-400 font-bold italic hidden sm:inline">Construisez d'abord le coffre, puis partez chercher l'or.</span>
         
         <button 
-          @click="activeLesson < 5 ? activeLesson++ : alert('Félicitations, vous avez compris les bases !')" 
-          class="px-4 py-2 rounded-xl bg-[#00AA90] hover:bg-[#008F7A] text-white text-xs font-black shadow-xs transition-all"
+          @click="activeLesson < 5 ? activeLesson++ : handleFinishLesson()"
+          :disabled="finishingLoading"
+          class="px-4 py-2 rounded-xl bg-[#00AA90] hover:bg-[#008F7A] text-white text-xs font-black shadow-xs transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {{ activeLesson === 5 ? 'Terminer ✓' : 'Continuer →' }}
+          {{ finishingLoading ? 'Validation...' : (activeLesson === 5 ? 'Terminer le cours ✓' : 'Continuer →') }}
         </button>
       </footer>
 
